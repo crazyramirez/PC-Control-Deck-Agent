@@ -34,6 +34,9 @@ _PLAYING = 4
 
 SWITCH_AFTER_S = 3.0  # another player must play this long before it replaces the shown one
 GRACE_S = 4.0  # hold the shown track while the player changes tracks
+ART_RECHECK_S = 1.5  # after a track change the cover is re-read this often...
+ART_SETTLE_S = 12.0  # ...for this long (and up to ART_MISSING_S while there is none at all)
+ART_MISSING_S = 60.0
 
 VK_MEDIA_NEXT_TRACK = 0xB0
 VK_MEDIA_PREV_TRACK = 0xB1
@@ -100,6 +103,8 @@ class WindowsMedia:
         self._endpoint: Any = None
         self._art_key: tuple | None = None
         self._art: Any = None
+        self._art_at = 0.0  # monotonic time of the last track change
+        self._art_next = 0.0  # next artwork re-check
         self._tiles: dict[str, Any] = {}  # generated covers per online service
         self.audio_ok = False
         self.media_ok = False
@@ -255,9 +260,21 @@ class WindowsMedia:
                     st.title = services.clean_title(svc, st.title or "")
                     st.app = f"{svc.name} · {st.app}"
                 key = (st.app, st.title, st.artist)
+                now = time.monotonic()
                 if key != self._art_key:  # fetch/convert artwork only when the track changes
                     self._art_key = key
+                    self._art_at = now
+                    self._art_next = now + ART_RECHECK_S
                     self._art = self._service_tile(svc) if svc is not None else await self._artwork(props)
+                elif svc is None and now >= self._art_next and (
+                    now - self._art_at < ART_SETTLE_S or (self._art is None and now - self._art_at < ART_MISSING_S)
+                ):
+                    # Players publish the new title before its thumbnail: re-read the cover for a few
+                    # seconds after a change (it may be missing, or still the previous track's).
+                    self._art_next = now + ART_RECHECK_S
+                    fresh = await self._artwork(props)
+                    if fresh is not None:
+                        self._art = fresh
                 st.art = self._art
             except Exception:
                 log.debug("media state failed", exc_info=True)

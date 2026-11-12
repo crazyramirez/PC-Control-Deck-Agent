@@ -385,6 +385,12 @@ class AgentServer:
         if t == P.T_AUTH_REQUEST:
             await self._on_auth(sess, msg["payload"])
             return
+        if t == P.T_ART_REQUEST:
+            # The deck missed the cover (dropped frame...): forget what was sent, push it again now.
+            if not self.require_auth or sess.authenticated:
+                sess.sent_art_id = 0
+                await self._send_art(sess)
+            return
         if t == P.T_COMMAND_REQUEST:
             granted = not self.require_auth or sess.authenticated
             rid = msg.get("requestId")

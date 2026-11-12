@@ -29,10 +29,12 @@ T_AUTH_REQUEST = "auth.request"
 T_AUTH_RESULT = "auth.result"
 T_COMMAND_REQUEST = "command.request"
 T_COMMAND_RESULT = "command.result"
+T_ART_REQUEST = "media.art_request"  # deck -> agent: resend the current cover (it missed it)
 
 KNOWN_TYPES = {
     T_HELLO, T_CAPABILITIES, T_SNAPSHOT, T_HEARTBEAT, T_ERROR,
     T_PAIR_REQUEST, T_PAIR_RESULT, T_AUTH_REQUEST, T_AUTH_RESULT, T_COMMAND_REQUEST, T_COMMAND_RESULT,
+    T_ART_REQUEST,
 }  # fmt: skip
 
 # Error codes

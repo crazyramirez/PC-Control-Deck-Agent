@@ -169,3 +169,37 @@ def test_max_clients():
 )
 def test_peer_allowed(ip, ok):
     assert peer_allowed(ip) is ok
+
+
+def test_art_request_resends_current_cover():
+    from pcdeck_agent.commands.artwork import Artwork
+
+    art = Artwork(0x1234, 2, 2, b"\x00" * 8, (10, 20, 30))
+
+    async def body(url, srv):
+        async with connect(url) as ws:
+            await ws.send(HELLO)
+            await recv_type(ws, P.T_CAPABILITIES)
+            orig = srv._sample_blocking
+
+            def sample():  # the fake provider has no media backend: pin a cover
+                msg = orig()
+                srv.latest_art = art
+                return msg
+
+            srv._sample_blocking = sample
+
+            async def next_binary(limit=10):
+                for _ in range(limit):
+                    m = await ws.recv()
+                    if isinstance(m, bytes):
+                        return m
+                raise AssertionError("no art frame")
+
+            first = await next_binary()
+            assert first[:4] == b"PCDA"
+            await ws.send(json.dumps({"v": 1, "type": P.T_ART_REQUEST, "payload": {"artId": 0x1234}}))
+            again = await next_binary()
+            assert again == first
+
+    run(with_server(body))

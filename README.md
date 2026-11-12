@@ -9,7 +9,7 @@ One app serves every deck that speaks protocol v1:
 | Deck | Repository |
 |---|---|
 | Guition **JC4827W543** — 4.3" 480×272 landscape (navigation rail, Crypto tab, setup assistant) | [PC-Control-Deck-ESP32-JC4827W543](https://github.com/crazyramirez/PC-Control-Deck-ESP32-JC4827W543) |
-| Guition **JC3248W535** — 3.5" 320×480 portrait | [PC-Control-Deck-ESP32-JC3248W535](https://github.com/crazyramirez/PC-Control-Deck-ESP32-JC3248W535) |
+| Guition **JC3248W535** — 3.5" 320×480 portrait (bottom tabs, Crypto tab from firmware 0.9.0, setup wizard) | [PC-Control-Deck-ESP32-JC3248W535](https://github.com/crazyramirez/PC-Control-Deck-ESP32-JC3248W535) |
 
 The deck repositories hold only their firmware; **the app is developed and released here**, and
 the decks embed this repository's protocol fixtures in their firmware tests. Weather needs app 0.5

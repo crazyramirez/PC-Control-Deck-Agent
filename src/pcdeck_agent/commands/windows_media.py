@@ -25,7 +25,7 @@ from concurrent.futures import Future
 from dataclasses import dataclass
 from typing import Any, Callable, Coroutine
 
-from . import start_apps
+from . import services, start_apps
 
 log = logging.getLogger(__name__)
 
@@ -100,6 +100,7 @@ class WindowsMedia:
         self._endpoint: Any = None
         self._art_key: tuple | None = None
         self._art: Any = None
+        self._tiles: dict[str, Any] = {}  # generated covers per online service
         self.audio_ok = False
         self.media_ok = False
 
@@ -247,16 +248,33 @@ class WindowsMedia:
                     st.can_seek = None
                 st.app = friendly_app(s.source_app_user_model_id)
                 st.pos_s, st.dur_s = self._timeline(s, bool(st.playing))
+                # A known site playing in a browser tab without metadata (e.g. Instagram): its own
+                # cover instead of the browser logo, and "Instagram · Chrome" as the source.
+                svc = services.detect(st.app, st.title, st.artist)
+                if svc is not None:
+                    st.title = services.clean_title(svc, st.title or "")
+                    st.app = f"{svc.name} · {st.app}"
                 key = (st.app, st.title, st.artist)
                 if key != self._art_key:  # fetch/convert artwork only when the track changes
                     self._art_key = key
-                    self._art = await self._artwork(props)
+                    self._art = self._service_tile(svc) if svc is not None else await self._artwork(props)
                 st.art = self._art
             except Exception:
                 log.debug("media state failed", exc_info=True)
         else:
             self._art_key, self._art = None, None
         return hold_track(self, st, time.monotonic())
+
+    def _service_tile(self, svc: Any) -> Any:
+        if svc.name not in self._tiles:
+            try:
+                from .artwork import service_tile
+
+                self._tiles[svc.name] = service_tile(svc)
+            except Exception:
+                log.debug("service cover failed", exc_info=True)
+                self._tiles[svc.name] = None
+        return self._tiles[svc.name]
 
     @staticmethod
     def _timeline(s: Any, playing: bool) -> tuple[int | None, int | None]:

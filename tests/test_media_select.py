@@ -60,3 +60,31 @@ def test_grace_hold_on_track_change():
     # A change while paused long ago is not held.
     other = MediaState(volume_pct=25, title="C", app="Chrome", playing=False)
     assert hold_track(m, other, 3.0 + GRACE_S) is other
+
+
+def test_service_detection_only_for_browser_tabs_without_metadata():
+    from pcdeck_agent.commands.services import clean_title, detect
+
+    ig = detect("Chrome", "Instagram", None)
+    assert ig is not None and ig.name == "Instagram"
+    assert detect("Edge", "(3) Instagram", "") .name == "Instagram"
+    yt = detect("Chrome", "Never Gonna Give You Up - YouTube", None)
+    assert yt.name == "YouTube" and clean_title(yt, "Never Gonna Give You Up - YouTube") == "Never Gonna Give You Up"
+    assert detect("Chrome", "Lo-fi beats - YouTube Music", None).name == "YouTube Music"
+    assert detect("Chrome", "Video by someone | TikTok", None).name == "TikTok"
+    # Real metadata (artist present) or a non-browser player: untouched.
+    assert detect("Chrome", "Some video", "Channel name") is None
+    assert detect("Spotify", "Instagram Song", None) is None
+    # No false positives on ordinary words.
+    assert detect("Chrome", "Max Verstappen onboard", None) is None
+    assert detect("Chrome", "Kickstart my heart", None) is None
+    assert clean_title(ig, "Instagram") == "Instagram"
+
+
+def test_service_tile_is_a_valid_cover():
+    from pcdeck_agent.commands.artwork import ART_SIZE, service_tile
+    from pcdeck_agent.commands.services import SERVICES
+
+    a = service_tile(SERVICES[0])
+    assert a.width == a.height == ART_SIZE and len(a.rgb565be) == ART_SIZE * ART_SIZE * 2 and a.art_id
+    assert service_tile(SERVICES[0]).art_id == a.art_id  # stable per service

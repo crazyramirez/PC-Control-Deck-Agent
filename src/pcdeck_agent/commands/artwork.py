@@ -63,6 +63,61 @@ def process(image_bytes: bytes, size: int = ART_SIZE) -> Artwork:
     return Artwork(art_id, size, size, bytes(out), _accent(img))
 
 
+def _font(names: tuple[str, ...], size: int):
+    from PIL import ImageFont
+
+    for n in names:
+        try:
+            return ImageFont.truetype(n, size)
+        except OSError:
+            continue
+    return ImageFont.load_default(size)
+
+
+def _hex(c: str) -> tuple[int, int, int]:
+    return int(c[1:3], 16), int(c[3:5], 16), int(c[5:7], 16)
+
+
+def service_tile(service, size: int = ART_SIZE) -> Artwork:
+    """Generated cover for a known online service (brand gradient + icon/letter + name).
+
+    Drawn at 4x and downscaled for smooth edges. Uses Windows' own fonts (Segoe UI, Segoe Fluent
+    Icons / MDL2 Assets); falls back to Pillow's default font elsewhere."""
+    from PIL import Image, ImageDraw
+
+    big = size * 4
+    stops = [_hex(c) for c in service.colors]
+    # Diagonal multi-stop gradient.
+    grad = Image.new("RGB", (big, big))
+    px = grad.load()
+    n = len(stops) - 1
+    for y in range(big):
+        for x in range(0, big):
+            t = (x + y) / (2 * (big - 1))
+            k = min(int(t * n), n - 1)
+            f = t * n - k
+            a, b = stops[k], stops[k + 1]
+            px[x, y] = (int(a[0] + (b[0] - a[0]) * f), int(a[1] + (b[1] - a[1]) * f), int(a[2] + (b[2] - a[2]) * f))
+    d = ImageDraw.Draw(grad)
+    white = (255, 255, 255)
+    cx, cy = big // 2, int(big * 0.44)
+    if service.letter:
+        f = _font(("segoeuib.ttf", "arialbd.ttf"), int(big * 0.52))
+        d.text((cx, cy), service.letter, font=f, fill=(229, 9, 20) if service.name == "Netflix" else white, anchor="mm")
+    else:
+        f = _font(("SegoeIcons.ttf", "segmdl2.ttf"), int(big * 0.40))
+        d.text((cx, cy), service.icon, font=f, fill=white, anchor="mm")
+    label = _font(("seguisb.ttf", "segoeuib.ttf", "arial.ttf"), int(big * 0.115))
+    d.text((cx, int(big * 0.84)), service.name, font=label, fill=white, anchor="mm")
+    img = grad.resize((size, size), Image.LANCZOS)
+
+    buf = io.BytesIO()
+    img.save(buf, "PNG")
+    art = process(buf.getvalue(), size)
+    # Stable id per service; the accent is the brand's main colour, darkened like any cover.
+    return Artwork(zlib.crc32(b"svc:" + service.name.encode()) or 1, art.width, art.height, art.rgb565be, art.accent)
+
+
 def chunks(art: Artwork) -> list[bytes]:
     total = len(art.rgb565be)
     return [

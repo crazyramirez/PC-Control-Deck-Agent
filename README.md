@@ -8,8 +8,8 @@ One app serves every deck that speaks protocol v1:
 
 | Deck | Repository |
 |---|---|
-| Guition **JC4827W543** — 4.3" 480×272 landscape (navigation rail, Crypto tab, setup assistant) | [PC-Control-Deck---ESP32-JC4827W543](https://github.com/crazyramirez/PC-Control-Deck---ESP32-JC4827W543) |
-| Guition **JC3248W535** — 3.5" 320×480 portrait | [PC-Control-DECK---PC-Control-Deck---ESP32-JC3248W535](https://github.com/crazyramirez/PC-Control-DECK---PC-Control-Deck---ESP32-JC3248W535) |
+| Guition **JC4827W543** — 4.3" 480×272 landscape (navigation rail, Crypto tab, setup assistant) | [PC-Control-Deck-ESP32-JC4827W543](https://github.com/crazyramirez/PC-Control-Deck-ESP32-JC4827W543) |
+| Guition **JC3248W535** — 3.5" 320×480 portrait | [PC-Control-Deck-ESP32-JC3248W535](https://github.com/crazyramirez/PC-Control-Deck-ESP32-JC3248W535) |
 
 The deck repositories include this one as a git submodule in `agent/` (for the protocol fixtures
 and docs, pinned to the version each firmware was tested with). **The app is developed and released

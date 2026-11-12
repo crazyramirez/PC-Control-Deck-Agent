@@ -1,0 +1,42 @@
+[project]
+name = "pcdeck-agent"
+version = "0.4.5"
+description = "PC Control Deck agent: hardware telemetry and allow-listed commands over the LAN"
+requires-python = ">=3.13,<3.14"
+# Exact pins: reproducible builds (see docs/adr/0002-agent-stack.md).
+dependencies = [
+    "psutil==7.2.2",
+    "websockets==17.4",
+    "pythonnet==3.2.1; sys_platform == 'win32'",
+    "PySide6==6.12.0",
+    "zeroconf==0.154.0",
+    "pycaw==20260927; sys_platform == 'win32'",
+    "comtypes==1.5.0; sys_platform == 'win32'",
+    "winrt-runtime==4.1.0; sys_platform == 'win32'",
+    "winrt-Windows.Media.Control==4!10.0.28000.2957; sys_platform == 'win32'",
+    "winrt-Windows.Foundation==4!10.0.28000.2957; sys_platform == 'win32'",
+    "winrt-Windows.Foundation.Collections==4!10.0.28000.2957; sys_platform == 'win32'",
+    "winrt-Windows.Storage.Streams==4!10.0.28000.2957; sys_platform == 'win32'",
+    "Pillow==13.0.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==9.2.0", "pyinstaller==6.22.3"]
+
+[project.scripts]
+pcdeck-agent = "pcdeck_agent.__main__:main"
+
+[project.gui-scripts]
+pcdeck-tray = "pcdeck_agent.gui.app:main"
+
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+markers = ["hardware: needs real Windows sensors via LibreHardwareMonitor (skipped unless PCDECK_HW_TESTS=1)"]

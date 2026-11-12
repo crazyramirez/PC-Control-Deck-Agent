@@ -58,7 +58,13 @@ jobs:
           if [ "$RUNNER_OS" = "Windows" ]; then PY=.venv/Scripts/python.exe; else PY=.venv/bin/python; fi
           echo "PY=$PY" >> "$GITHUB_ENV"
           "$PY" -m pip install --disable-pip-version-check -e ".[dev]"
-          echo "VERSION=$(PYTHONPATH=src "$PY" -c 'import pcdeck_agent; print(pcdeck_agent.__version__)')" >> "$GITHUB_ENV"
+          VERSION=$(PYTHONPATH=src "$PY" -c 'import pcdeck_agent; print(pcdeck_agent.__version__)')
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          # A release tag must name the version the assets are built with.
+          if [[ "$GITHUB_REF" == refs/tags/v* ]] && [ "${GITHUB_REF_NAME#v}" != "$VERSION" ]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match __version__ $VERSION"
+            exit 1
+          fi
 
       - name: Tests
         env:
@@ -101,12 +107,34 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v7
+
+      - name: Release notes (CHANGELOG section of this version)
+        run: |
+          VER="${GITHUB_REF_NAME#v}"
+          awk -v h="## $VER" 'index($0, h) == 1 && (length($0) == length(h) || substr($0, length(h) + 1, 1) == " ") {f = 1; next}
+                               f && /^## / {exit} f' docs/CHANGELOG.md > notes.md
+          if [ ! -s notes.md ]; then echo "::error::docs/CHANGELOG.md has no '## $VER' section"; exit 1; fi
+          # Changelog links are relative to docs/: make them absolute for the release page.
+          sed -i "s#](adr/#](https://github.com/$GITHUB_REPOSITORY/blob/$GITHUB_REF_NAME/docs/adr/#g" notes.md
+          {
+            echo
+            echo "### Install"
+            echo
+            echo "Windows: \`PCControlDeck-Setup-$VER.exe\` (or the portable zip). Linux: \`PCControlDeck-$VER-linux-x86_64.tar.gz\` + \`./install.sh\`."
+            echo "macOS: \`.dmg\` for Apple Silicon (\`arm64\`) or Intel (\`x86_64\`), unsigned: see the [README](https://github.com/$GITHUB_REPOSITORY#install) for the first launch."
+          } >> notes.md
+          cat notes.md
+
       - uses: actions/download-artifact@v8
         with:
           pattern: pcdeck-agent-*
           path: assets
           merge-multiple: true
+
       - uses: softprops/action-gh-release@v3
         with:
+          name: PC Control Deck ${{ github.ref_name }}
+          body_path: notes.md
           files: assets/*
           generate_release_notes: true

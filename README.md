@@ -11,9 +11,9 @@ One app serves every deck that speaks protocol v1:
 | Guition **JC4827W543** — 4.3" 480×272 landscape (navigation rail, Crypto tab, setup assistant) | [PC-Control-Deck-ESP32-JC4827W543](https://github.com/crazyramirez/PC-Control-Deck-ESP32-JC4827W543) |
 | Guition **JC3248W535** — 3.5" 320×480 portrait | [PC-Control-Deck-ESP32-JC3248W535](https://github.com/crazyramirez/PC-Control-Deck-ESP32-JC3248W535) |
 
-The deck repositories include this one as a git submodule in `agent/` (for the protocol fixtures
-and docs, pinned to the version each firmware was tested with). **The app is developed and released
-here.** Weather needs app 0.5 or later, the Crypto tab 0.6 or later.
+The deck repositories hold only their firmware; **the app is developed and released here**, and
+the decks embed this repository's protocol fixtures in their firmware tests. Weather needs app 0.5
+or later, the Crypto tab 0.6 or later.
 
 Current version: **0.7.0** — see [CHANGELOG](docs/CHANGELOG.md).
 
@@ -206,7 +206,8 @@ docs/               PROTOCOL, SECURITY, ADRs, CHANGELOG
 1. Update [PROTOCOL.md](docs/PROTOCOL.md) and the fixtures in [`shared/fixtures`](shared/fixtures)
    (the app's tests read them), and keep protocol v1 backwards compatible: decks ignore unknown
    fields and message types.
-2. In each deck repository, move the `agent` submodule to the new commit
-   (`git -C agent pull origin main`), run `python firmware/tools/gen_fixtures.py` to re-embed the
-   fixtures in the firmware tests, and commit both. The deck CI fails while the embedded fixtures
-   are out of date (`gen_fixtures.py --check`).
+2. In each deck repository (cloned next to this one, e.g. `D:\DEV\PC-Control-Deck-Agent` and
+   `D:\DEV\PC Control Deck - ESP32-JC4827W543`), run `python firmware/tools/gen_fixtures.py` to
+   re-embed the fixtures in the firmware tests (`--agent <dir>` if this repository is elsewhere) and
+   commit `fixtures.h`. The JC4827W543 CI checks it against this repository's `main`
+   (`gen_fixtures.py --check`).

@@ -35,7 +35,7 @@ pairing; deck firmware unchanged). Details and permissions: [ADR 0005](adr/0005-
   Ubuntu; GitHub Release on `v*` tags.
 - Generated covers for browser services use the service's initial where Windows' Segoe icon font
   does not exist.
-- Own repository, used by the deck repositories as the `agent/` submodule.
+- Own repository, shared by the JC4827W543 and JC3248W535 decks (they embed its protocol fixtures).
 
 ## 0.6.0 — Crypto
 

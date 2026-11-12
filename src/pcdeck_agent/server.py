@@ -29,6 +29,7 @@ from . import protocol as P
 from .hardware.mapper import MapperConfig, SensorMapper
 from .hardware.provider import HardwareMetricsProvider
 from .commands.router import CommandRouter
+from .crypto import Crypto, CryptoError, norm_cur
 from .security.credentials import CredentialStore
 from .security.pairing import PairingManager
 from .weather import Weather, WeatherError
@@ -39,6 +40,8 @@ HELLO_TIMEOUT_S = 5.0
 HEARTBEAT_S = 5.0
 RATE_LIMIT_PER_S = 20
 WEATHER_MIN_GAP_S = 1.0  # per session: weather.search / weather.request at most once a second
+CRYPTO_MIN_GAP_S = 2.0  # per session: crypto.request at most once every 2 s (extras dropped)
+CHART_MIN_GAP_S = 0.3  # per session: crypto.chart at most once every 0.3 s (the deck retries)
 MAX_AUTH_FAILURES_PER_SESSION = 5
 MAX_AUTH_FAILURES_PER_PEER_MIN = 10
 
@@ -64,6 +67,8 @@ class ClientSession:
     auth_failures: int = 0
     sent_art_id: int = 0
     weather_at: float = 0.0  # last weather.search / weather.request served (rate limit)
+    crypto_at: float = 0.0  # last crypto.request served
+    chart_at: float = 0.0  # last crypto.chart served
     connected_at: float = field(default_factory=time.time)
     recent: deque = field(default_factory=lambda: deque(maxlen=RATE_LIMIT_PER_S + 1))
 
@@ -101,8 +106,11 @@ class AgentServer:
         commands: CommandRouter | None = None,
         battery: Any = None,
         weather: Weather | None = None,
+        crypto: Crypto | None = None,
     ) -> None:
         self.weather = weather or Weather()
+        self.crypto = crypto or Crypto()
+        self._tasks: set[asyncio.Task] = set()  # background replies (strong refs until done)
         self.commands = commands
         self.battery = battery  # hardware.battery.BatteryReader (None: not reported)
         self.provider = provider
@@ -240,6 +248,41 @@ class AgentServer:
             pass
         except Exception:
             log.exception("weather request failed")
+
+    async def _serve_crypto(self, sess: ClientSession, t: str, payload: dict[str, Any]) -> None:
+        """Market snapshot / chart candles (Binance, CoinGecko...), off the event loop; errors go back as {error}."""
+        try:
+            cur = norm_cur(payload.get("cur"))
+            if t == P.T_CRYPTO_REQUEST:
+                reply = P.T_CRYPTO_DATA
+                try:
+                    body = await asyncio.to_thread(self.crypto.market, payload.get("coins"), cur)
+                except CryptoError as e:
+                    body = {"cur": cur, "error": str(e)[:24] or "unavailable"}
+                except Exception:
+                    log.exception("crypto market failed")
+                    body = {"cur": cur, "error": "unavailable"}
+            else:
+                reply = P.T_CRYPTO_CANDLES
+                p, r = payload.get("p"), payload.get("r")
+                try:
+                    body = await asyncio.to_thread(self.crypto.candles, p, r, cur)
+                except Exception as e:
+                    if not isinstance(e, CryptoError):
+                        log.exception("crypto chart failed")
+                    code = (str(e)[:24] if isinstance(e, CryptoError) else "") or "unavailable"
+                    body = {"p": p[:16] if isinstance(p, str) else "", "r": r[:4] if isinstance(r, str) else ""}
+                    body |= {"error": code} if code == "bad_request" else {"cur": cur, "error": code}
+            await self._send(sess.ws, P.envelope(reply, body, device_id=self.device_id))
+        except ConnectionClosed:
+            pass
+        except Exception:
+            log.exception("crypto request failed")
+
+    def _spawn(self, coro: Any) -> None:
+        task = asyncio.create_task(coro)
+        self._tasks.add(task)
+        task.add_done_callback(self._tasks.discard)
 
     async def _send_art(self, s: ClientSession) -> None:
         """Push the current album art once per track (binary frames, see commands/artwork.py)."""
@@ -417,6 +460,16 @@ class AgentServer:
             if (not self.require_auth or sess.authenticated) and time.monotonic() - sess.weather_at >= WEATHER_MIN_GAP_S:
                 sess.weather_at = time.monotonic()
                 asyncio.create_task(self._serve_weather(sess, t, msg["payload"]))
+            return
+        if t in (P.T_CRYPTO_REQUEST, P.T_CRYPTO_CHART):
+            if not self.require_auth or sess.authenticated:
+                now = time.monotonic()
+                if t == P.T_CRYPTO_REQUEST and now - sess.crypto_at >= CRYPTO_MIN_GAP_S:
+                    sess.crypto_at = now
+                    self._spawn(self._serve_crypto(sess, t, msg["payload"]))
+                elif t == P.T_CRYPTO_CHART and now - sess.chart_at >= CHART_MIN_GAP_S:
+                    sess.chart_at = now
+                    self._spawn(self._serve_crypto(sess, t, msg["payload"]))
             return
         if t == P.T_ART_REQUEST:
             # The deck missed the cover (dropped frame...): forget what was sent, push it again now.

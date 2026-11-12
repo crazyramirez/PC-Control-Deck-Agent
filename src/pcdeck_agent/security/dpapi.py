@@ -1,7 +1,7 @@
 """Windows DPAPI (CryptProtectData, current-user scope) via ctypes. No third-party dependency.
 
-On non-Windows platforms ``protect``/``unprotect`` raise ``DpapiUnavailable``; the macOS agent will
-use the Keychain instead.
+On non-Windows platforms ``protect``/``unprotect`` raise ``DpapiUnavailable``; the credential store
+uses an owner-only (0600) file there instead (see credentials.py).
 """
 
 from __future__ import annotations
@@ -47,7 +47,7 @@ if sys.platform == "win32":
     def unprotect(data: bytes) -> bytes:
         return _call(lambda i, d, e, r, p, f, o: _crypt32.CryptUnprotectData(i, d, e, r, p, f, o), data)
 
-else:  # pragma: no cover - exercised on macOS later
+else:  # pragma: no cover - Linux / macOS
 
     def protect(data: bytes) -> bytes:
         raise DpapiUnavailable("DPAPI is Windows-only")

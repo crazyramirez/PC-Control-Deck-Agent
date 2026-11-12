@@ -1,0 +1,24 @@
++-o AppleSmartBattery  <class AppleSmartBattery, id 0x1000002b3, registered, matched, active, busy 0 (0 ms), retain 7>
+    {
+      "PostChargeWaitSeconds" = 120
+      "built-in" = Yes
+      "AppleRawAdapterDetails" = ({"AdapterID"=0,"Model"="0x7019","FamilyCode"=18446744073172697098,"Description"="pd charger"})
+      "ExternalChargeCapable" = Yes
+      "MaxCapacity" = 100
+      "BatteryInstalled" = Yes
+      "Amperage" = 18446744073709550050
+      "ExternalConnected" = No
+      "Voltage" = 12420
+      "CurrentCapacity" = 78
+      "AppleRawCurrentCapacity" = 3890
+      "AppleRawMaxCapacity" = 4987
+      "DesignCapacity" = 6075
+      "TimeRemaining" = 312
+      "AvgTimeToEmpty" = 315
+      "IsCharging" = No
+      "FullyCharged" = No
+      "InstantAmperage" = 18446744073709550000
+      "Temperature" = 3050
+      "CycleCount" = 123
+      "BatteryData" = {"StateOfCharge"=78,"Voltage"=12420,"CycleCount"=123,"DesignCapacity"=6075}
+    }

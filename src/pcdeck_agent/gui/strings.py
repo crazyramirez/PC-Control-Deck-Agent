@@ -1,6 +1,13 @@
-"""UI strings (Spanish / English, picked from the Windows display language)."""
+"""UI strings (Spanish / English, picked from the system display language).
+
+Windows strings are the base; Linux and macOS replace the few that talk about Windows (start with
+Windows, administrator, tray) through ``_OS_ES`` / ``_OS_EN``, plus a shorter power-actions label
+(their UI fonts are wider and a checkbox label does not wrap).
+"""
 
 from __future__ import annotations
+
+import sys
 
 from PySide6.QtCore import QLocale
 
@@ -98,7 +105,46 @@ _EN = {
     "allow_power": "Allow shutting down and restarting the PC from the device",
 }
 
-_T = _ES if QLocale.system().name().lower().startswith("es") else _EN
+_OS_ES = {
+    "linux": {
+        "autostart": "Iniciar al iniciar sesión",
+        "admin_hint": "La potencia de CPU (RAPL) requiere root o una regla udev (ver README). Lo demás funciona como usuario normal.",
+        "admin_yes": "Root · todos los sensores disponibles",
+        "admin_no": "Usuario estándar · sin potencia de CPU",
+        "allow_power": "Permitir apagar y reiniciar desde el dispositivo",
+    },
+    "darwin": {
+        "autostart": "Iniciar al iniciar sesión",
+        "admin_hint": "La potencia de CPU/GPU y la frecuencia de CPU requieren powermetrics (root). Para controlar Música o Spotify, macOS pide permiso de Automatización la primera vez.",
+        "admin_yes": "Root · potencia y frecuencia disponibles",
+        "admin_no": "Usuario estándar · sin potencia ni frecuencia de CPU",
+        "tray_hidden": "PC Control Deck sigue funcionando en la barra de menús.",
+        "allow_power": "Permitir apagar y reiniciar desde el dispositivo",
+    },
+}
+
+_OS_EN = {
+    "linux": {
+        "autostart": "Start at login",
+        "admin_hint": "CPU package power (RAPL) needs root or a udev rule (see README). Everything else works as a normal user.",
+        "admin_yes": "Root · all sensors available",
+        "admin_no": "Standard user · no CPU power",
+        "allow_power": "Allow shutdown and restart from the device",
+    },
+    "darwin": {
+        "autostart": "Start at login",
+        "admin_hint": "CPU/GPU power and CPU clock need powermetrics (root). To control Music or Spotify, macOS asks for the Automation permission the first time.",
+        "admin_yes": "Root · power and clock available",
+        "admin_no": "Standard user · no CPU power or clock",
+        "tray_hidden": "PC Control Deck keeps running in the menu bar.",
+        "allow_power": "Allow shutdown and restart from the device",
+    },
+}
+
+_SPANISH = QLocale.system().name().lower().startswith("es")
+_T = _ES if _SPANISH else _EN
+if sys.platform != "win32":
+    _T = {**_T, **(_OS_ES if _SPANISH else _OS_EN).get("darwin" if sys.platform == "darwin" else "linux", {})}
 
 
 def t(key: str, **kw: object) -> str:

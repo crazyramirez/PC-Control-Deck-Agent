@@ -12,12 +12,12 @@ import threading
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
-from .hardware.battery import BatteryReader
 from .commands.router import CommandRouter, default_backend
 from .config import AgentConfig, app_dir, resolve_bind
 from .discovery import Advertiser
 from .hardware.mapper import MapperConfig
 from .hardware.provider import HardwareMetricsProvider
+from .platforms import battery_reader
 from .security.credentials import CredentialStore, PairedDevice
 from .security.pairing import PairingManager, PairingState
 from .server import AgentServer, SessionInfo
@@ -39,7 +39,7 @@ class AgentRuntime:
     def __init__(self, cfg: AgentConfig, provider_factory: Callable[[], HardwareMetricsProvider]) -> None:
         self.cfg = cfg
         self._provider_factory = provider_factory
-        self.enable_commands = True  # volume / media / lock on the local Windows session
+        self.enable_commands = True  # volume / media / lock on the local desktop session
         self.credentials = CredentialStore(app_dir() / "devices.dat")
         self.pairing = PairingManager()
         self.status = RuntimeStatus()
@@ -106,7 +106,7 @@ class AgentRuntime:
             commands=CommandRouter(
                 await asyncio.to_thread(default_backend, lambda: self.cfg.allow_power) if self.enable_commands else None
             ),
-            battery=BatteryReader() if self.enable_commands else None,  # real hardware only (not --fake)
+            battery=battery_reader() if self.enable_commands else None,  # real hardware only (not --fake)
         )
         self.server.on_sessions_changed = lambda s: self.on_sessions and self.on_sessions(s)
         self.server.on_paired = lambda cid, name: self.on_paired and self.on_paired(cid, name)

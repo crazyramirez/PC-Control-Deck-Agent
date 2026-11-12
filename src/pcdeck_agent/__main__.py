@@ -1,4 +1,4 @@
-"""PC Control Deck agent CLI (Hito 2: sensors only; networking arrives in Hito 3).
+"""PC Control Deck agent CLI (Windows, Linux, macOS).
 
   python -m pcdeck_agent sample [--count 5] [--interval 1.0] [--fake]
   python -m pcdeck_agent diag   [--out diag.json] [--fake]
@@ -10,7 +10,6 @@ import argparse
 import json
 import logging
 import socket
-import sys
 import time
 from dataclasses import asdict
 
@@ -27,11 +26,12 @@ def create_provider(fake: bool) -> HardwareMetricsProvider:
         from .hardware.demo_frames import demo_provider
 
         return demo_provider()
-    if sys.platform == "win32":
-        from .hardware.lhm_provider import LhmProvider
+    from .platforms import hardware_provider
 
-        return LhmProvider()
-    raise SystemExit(f"no hardware provider for {sys.platform} yet (macOS provider planned); use --fake")
+    try:
+        return hardware_provider()  # Windows: LibreHardwareMonitor; Linux: sysfs/hwmon; macOS: IOKit
+    except RuntimeError as e:
+        raise SystemExit(str(e)) from None
 
 
 def short_host() -> str:
@@ -88,12 +88,12 @@ def cmd_diag(args: argparse.Namespace) -> int:
 def cmd_serve(args: argparse.Namespace) -> int:
     import threading
 
-    from .config import app_dir, load_config
+    from .config import load_config, log_dir
     from .logging_setup import setup_logging
     from .runtime import AgentRuntime
 
     cfg, cfg_path = load_config()
-    log_path = setup_logging("DEBUG" if args.verbose else cfg.log_level, app_dir() / "logs")
+    log_path = setup_logging("DEBUG" if args.verbose else cfg.log_level, log_dir())
     if args.bind:
         cfg.bind = [args.bind]
     if args.port:

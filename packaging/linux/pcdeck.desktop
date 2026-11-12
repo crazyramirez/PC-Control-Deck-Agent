@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=PC Control Deck
+Comment=Hardware telemetry and media control for the PC Control Deck
+Exec=@EXEC@
+Icon=pcdeck
+Terminal=false
+Categories=Utility;System;Monitor;
+StartupNotify=false

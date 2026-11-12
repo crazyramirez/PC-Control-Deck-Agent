@@ -16,7 +16,7 @@ from PySide6.QtNetwork import QLocalServer, QLocalSocket
 from PySide6.QtWidgets import QApplication, QMenu, QSystemTrayIcon
 
 from .. import __version__
-from ..config import app_dir, load_config
+from ..config import load_config, log_dir
 from ..logging_setup import setup_logging
 from ..runtime import AgentRuntime
 from . import autostart
@@ -34,9 +34,9 @@ def _provider_factory(fake: bool):
             from ..hardware.demo_frames import demo_provider
 
             return demo_provider()
-        from ..hardware.lhm_provider import LhmProvider
+        from ..platforms import hardware_provider
 
-        return LhmProvider()
+        return hardware_provider()  # Windows: LhmProvider (as before); Linux / macOS: their own
 
     return make
 
@@ -95,7 +95,7 @@ def main(argv: list[str] | None = None) -> int:
     cfg, cfg_path = load_config()
     if args.screenshot:
         cfg.port, cfg.mdns = 0, False  # ephemeral port, no advertisement
-    log_path = setup_logging(cfg.log_level, app_dir() / "logs")
+    log_path = setup_logging(cfg.log_level, log_dir())
     log.info("PC Control Deck %s (tray), config %s, log %s", __version__, cfg_path, log_path)
 
     rt = AgentRuntime(cfg, _provider_factory(args.fake))

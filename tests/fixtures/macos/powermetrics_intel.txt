@@ -1,0 +1,23 @@
+*** Sampled system activity (Wed Nov 12 10:00:01 2026 +0100) (1003.45ms elapsed) ***
+
+**** Processor usage ****
+
+Intel energy model derived package power (CPUs+GT+SA): 5.21W
+
+LLC flushed residency: 72.3%
+
+System Average frequency as fraction of nominal: 79.52% (1828.96 Mhz)
+Package 0 C-state residency: 73.73% (C2: 5.06% C3: 2.20% C6: 0.00% C7: 66.47% C8: 0.00% )
+
+Core 0 C-state residency: 82.01% (C3: 0.00% C6: 0.00% C7: 82.01% )
+
+CPU 0 duty cycles/s: active/idle [< 16 us: 59.82/0.00] [< 32 us: 0.00/0.00]
+CPU Average frequency as fraction of nominal: 75.84% (1744.36 Mhz)
+
+CPU 1 duty cycles/s: active/idle [< 16 us: 19.94/0.00] [< 32 us: 0.00/0.00]
+CPU Average frequency as fraction of nominal: 128.40% (2953.20 Mhz)
+
+**** GPU usage ****
+
+GPU Active residency:   2.43%
+GPU Average frequency as fraction of nominal:  31.73% (349.04 Mhz)

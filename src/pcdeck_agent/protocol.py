@@ -35,11 +35,16 @@ T_WEATHER_SEARCH = "weather.search"  # deck -> agent: {q, lang} city search
 T_WEATHER_RESULTS = "weather.results"  # agent -> deck: {q, results[]} or {q, error}
 T_WEATHER_REQUEST = "weather.request"  # deck -> agent: {lat, lon} forecast for the chosen place
 T_WEATHER_DATA = "weather.data"  # agent -> deck: compact forecast or {error}
+T_CRYPTO_REQUEST = "crypto.request"  # deck -> agent: {coins: [{p, g}], cur} market snapshot
+T_CRYPTO_DATA = "crypto.data"  # agent -> deck: prices, sparks, global market or {cur, error}
+T_CRYPTO_CHART = "crypto.chart"  # deck -> agent: {p, r, cur} candles for one pair / range
+T_CRYPTO_CANDLES = "crypto.candles"  # agent -> deck: {p, r, cur, c: [[t, o, h, l, c, v]]} or {.., error}
 
 KNOWN_TYPES = {
     T_HELLO, T_CAPABILITIES, T_SNAPSHOT, T_HEARTBEAT, T_ERROR,
     T_PAIR_REQUEST, T_PAIR_RESULT, T_AUTH_REQUEST, T_AUTH_RESULT, T_COMMAND_REQUEST, T_COMMAND_RESULT,
     T_ART_REQUEST, T_WEATHER_SEARCH, T_WEATHER_RESULTS, T_WEATHER_REQUEST, T_WEATHER_DATA,
+    T_CRYPTO_REQUEST, T_CRYPTO_DATA, T_CRYPTO_CHART, T_CRYPTO_CANDLES,
 }  # fmt: skip
 
 # Error codes

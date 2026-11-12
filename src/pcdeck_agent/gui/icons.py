@@ -65,3 +65,8 @@ def tray_icon(status: str) -> QIcon:
 def save_ico(path: str) -> bool:
     """Write a 256 px .ico for PyInstaller / the installer (Qt's ICO writer)."""
     return _draw(256, None).save(path, "ICO")
+
+
+def save_png(path: str, size: int = 1024) -> bool:
+    """Write the app icon as PNG (macOS .icns via PyInstaller/Pillow, Linux desktop icon)."""
+    return _draw(size, None).save(path, "PNG")

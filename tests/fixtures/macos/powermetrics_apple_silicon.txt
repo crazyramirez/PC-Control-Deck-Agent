@@ -1,0 +1,24 @@
+*** Sampled system activity (Wed Nov 12 10:00:01 2026 +0100) (1004.12ms elapsed) ***
+
+**** Processor usage ****
+
+E-Cluster HW active frequency: 1063 MHz
+E-Cluster HW active residency:  47.51% (600 MHz:  45% 972 MHz:  22% 1332 MHz: 7.9% 1704 MHz:  10% 2064 MHz:  15%)
+E-Cluster idle residency:  52.49%
+CPU 0 frequency: 1131 MHz
+CPU 0 idle residency:  58.07%
+P-Cluster HW active frequency: 1520 MHz
+P-Cluster HW active residency:   6.33% (600 MHz:  58% 828 MHz:   0% 1056 MHz: 4.1% 1284 MHz: 3.0% 1500 MHz: 3.3% 1728 MHz: 2.5% 1956 MHz: 5.8% 2184 MHz: 1.9% 2388 MHz: 2.4% 2592 MHz: 1.2% 2772 MHz: 1.3% 2988 MHz: 1.3% 3096 MHz:  15%)
+P-Cluster idle residency:  93.67%
+
+CPU Power: 437 mW
+GPU Power: 15 mW
+ANE Power: 0 mW
+Combined Power (CPU + GPU + ANE): 452 mW
+
+**** GPU usage ****
+
+GPU HW active frequency: 389 MHz
+GPU HW active residency:   3.28% (389 MHz: 3.3% 486 MHz:   0% 648 MHz:   0% 778 MHz:   0% 972 MHz:   0% 1062 MHz:   0%)
+GPU idle residency:  96.72%
+GPU Power: 15 mW

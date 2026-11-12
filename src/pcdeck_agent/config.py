@@ -1,6 +1,7 @@
 """Agent configuration: versioned JSON in the user's local app-data dir, safe defaults.
 
-No secrets are stored here (pairing credentials will live in a DPAPI-protected store, Hito 4).
+No secrets are stored here (pairing credentials live in security/credentials.py: DPAPI on Windows,
+an owner-only file on Linux/macOS).
 """
 
 from __future__ import annotations
@@ -18,13 +19,25 @@ CONFIG_SCHEMA = 1
 
 
 def app_dir() -> Path:
+    """Per-user data dir: config.json and the paired-device store.
+
+    Windows ``%LOCALAPPDATA%\\PcControlDeck``; macOS ``~/Library/Application Support/PC Control Deck``;
+    Linux ``$XDG_CONFIG_HOME/pcdeck`` (``~/.config/pcdeck``)."""
     if sys.platform == "win32":
         base = Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
-    elif sys.platform == "darwin":
-        base = Path.home() / "Library" / "Application Support"
-    else:
-        base = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
-    return base / "PcControlDeck"
+        return base / "PcControlDeck"
+    if sys.platform == "darwin":
+        return Path.home() / "Library" / "Application Support" / "PC Control Deck"
+    return Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config") / "pcdeck"
+
+
+def log_dir() -> Path:
+    """Windows ``<app_dir>\\logs``; macOS ``~/Library/Logs/PC Control Deck``; Linux ``$XDG_STATE_HOME/pcdeck/logs``."""
+    if sys.platform == "win32":
+        return app_dir() / "logs"
+    if sys.platform == "darwin":
+        return Path.home() / "Library" / "Logs" / "PC Control Deck"
+    return Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local" / "state") / "pcdeck" / "logs"
 
 
 @dataclass

@@ -1,0 +1,10 @@
++-o AMDRadeonX6000_AMDNavi14GraphicsAccelerator  <class AMDRadeonX6000_AMDNavi14GraphicsAccelerator, id 0x10000047d, registered, matched, active, busy 0 (0 ms), retain 58>
+    {
+      "IOClass" = "AMDRadeonX6000_AMDNavi14GraphicsAccelerator"
+      "PerformanceStatistics" = {"Total Power(W)"=0,"hardwareWaitTime"=0,"vramFreeBytes"=3602513920,"Device Utilization %"=14,"GPU Activity(%)"=14,"vramUsedBytes"=692453376,"Temperature(C)"=48,"Fan Speed(%)"=33}
+    }
++-o IntelAccelerator  <class IntelAccelerator, id 0x1000004c2, registered, matched, active, busy 0 (0 ms), retain 35>
+    {
+      "IOClass" = "IntelAccelerator"
+      "PerformanceStatistics" = {"Device Utilization %"=3,"GPU Activity(%)"=3,"In use system memory"=105086976}
+    }

@@ -1,6 +1,6 @@
 [project]
 name = "pcdeck-agent"
-version = "0.5.0"
+version = "0.7.0"
 description = "PC Control Deck agent: hardware telemetry and allow-listed commands over the LAN"
 requires-python = ">=3.13,<3.14"
 # Exact pins: reproducible builds (see docs/adr/0002-agent-stack.md).
@@ -18,6 +18,10 @@ dependencies = [
     "winrt-Windows.Foundation.Collections==4!10.0.28000.2957; sys_platform == 'win32'",
     "winrt-Windows.Storage.Streams==4!10.0.28000.2957; sys_platform == 'win32'",
     "Pillow==13.0.0",
+    # Linux: MPRIS media control over D-Bus (pure Python) and NVIDIA sensors through NVML (ctypes;
+    # without the NVIDIA driver it simply reports nothing). macOS needs no extra package (ctypes + osascript).
+    "jeepney==0.9.0; sys_platform == 'linux'",
+    "nvidia-ml-py==13.615.71; sys_platform == 'linux'",
 ]
 
 [project.optional-dependencies]
@@ -39,4 +43,4 @@ where = ["src"]
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
-markers = ["hardware: needs real Windows sensors via LibreHardwareMonitor (skipped unless PCDECK_HW_TESTS=1)"]
+markers = ["hardware: needs real sensors of the running OS (skipped unless PCDECK_HW_TESTS=1)"]

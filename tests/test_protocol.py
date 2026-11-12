@@ -7,14 +7,16 @@ import pytest
 from pcdeck_agent import protocol as P
 from pcdeck_agent.hardware.models import CpuMetrics, FanMetrics, GpuMetrics, RamMetrics, StorageMetrics, TelemetrySnapshot
 
-FIX = Path(__file__).resolve().parents[2] / "shared" / "fixtures"
+FIX = Path(__file__).resolve().parents[1] / "shared" / "fixtures"
 
 
 def fixture(name: str) -> str:
     return (FIX / name).read_text(encoding="utf-8")
 
 
-@pytest.mark.parametrize("name", ["hello.json", "command_request.json", "snapshot_full.json", "snapshot_unprivileged.json"])
+@pytest.mark.parametrize(
+    "name", ["hello.json", "command_request.json", "snapshot_full.json", "snapshot_unprivileged.json", "crypto_data.json", "crypto_candles.json"]
+)
 def test_valid_fixtures_decode(name):
     msg = P.decode(fixture(name))
     assert msg["v"] == 1

@@ -18,12 +18,13 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QProgressBar,
     QPushButton,
+    QSystemTrayIcon,
     QVBoxLayout,
     QWidget,
 )
 
 from .. import __version__
-from ..config import app_dir
+from ..config import log_dir
 from ..runtime import AgentRuntime, RuntimeStatus
 from ..security.pairing import PairingState
 from ..server import SessionInfo
@@ -104,10 +105,23 @@ def _ago(ts: float) -> str:
 
 
 def is_admin() -> bool:
+    if sys.platform != "win32":
+        return hasattr(os, "geteuid") and os.geteuid() == 0  # Linux / macOS: root
     try:
         return bool(ctypes.windll.shell32.IsUserAnAdmin())
     except (AttributeError, OSError):
         return False
+
+
+def open_logs() -> None:
+    if sys.platform == "win32":
+        os.startfile(str(log_dir()))
+        return
+    from PySide6.QtCore import QUrl
+    from PySide6.QtGui import QDesktopServices
+
+    log_dir().mkdir(parents=True, exist_ok=True)
+    QDesktopServices.openUrl(QUrl.fromLocalFile(str(log_dir())))
 
 
 class MainWindow(QWidget):
@@ -243,7 +257,7 @@ class MainWindow(QWidget):
         foot.addWidget(version)
         logs = QPushButton(t("logs"))
         logs.setObjectName("link")
-        logs.clicked.connect(lambda: os.startfile(str(app_dir() / "logs")) if sys.platform == "win32" else None)
+        logs.clicked.connect(open_logs)
         foot.addWidget(logs)
         quit_btn = QPushButton(t("quit"))
         quit_btn.setObjectName("link")
@@ -403,6 +417,9 @@ class MainWindow(QWidget):
 
     def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802 (Qt API)
         event.ignore()
+        if not QSystemTrayIcon.isSystemTrayAvailable():
+            self.showMinimized()  # e.g. GNOME without an AppIndicator extension: never hide for good
+            return
         self.hide()
         if not self._hidden_hint_shown:
             self._hidden_hint_shown = True

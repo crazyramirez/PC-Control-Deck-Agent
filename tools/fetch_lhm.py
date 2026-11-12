@@ -1,6 +1,6 @@
 """Download the pinned LibreHardwareMonitor release and extract its .NET Framework DLLs.
 
-The binaries are NOT committed. They land in agent/vendor/lhm-<version>/ (git-ignored).
+The binaries are NOT committed. They land in vendor/lhm-<version>/ (git-ignored).
 The SHA-256 of the release zip is pinned; a mismatch aborts.
 
 LibreHardwareMonitor is MPL-2.0: https://github.com/LibreHardwareMonitor/LibreHardwareMonitor

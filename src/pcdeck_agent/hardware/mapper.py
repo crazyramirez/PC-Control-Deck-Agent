@@ -46,7 +46,8 @@ VALID_RANGES: dict[SensorKind, tuple[float, float]] = {
 STALE_KINDS = {SensorKind.TEMPERATURE, SensorKind.POWER, SensorKind.CLOCK, SensorKind.FAN}
 
 # LHM sensors first; "CPU (EC)" is the Lenovo embedded-controller reading used when MSRs are unavailable.
-CPU_TEMP_PRIORITY = ("CPU Package", "Core (Tctl/Tdie)", "Tctl/Tdie", "Core (Tdie)", "Tdie", "Core (Tctl)", "Core Max", "CPU (EC)")
+# "CPU Die" (last, never produced by LHM): macOS die sensors (Intel SMC TC0D..., Apple M1 "PMU tdie").
+CPU_TEMP_PRIORITY = ("CPU Package", "Core (Tctl/Tdie)", "Tctl/Tdie", "Core (Tdie)", "Tdie", "Core (Tctl)", "Core Max", "CPU (EC)", "CPU Die")
 EC_PREFIX = "/lenovo-gamezone"
 GPU_POWER_NAMES = ("GPU Package", "GPU Board Power", "GPU Power", "GPU Core")
 

@@ -1,0 +1,22 @@
+# Python
+.venv/
+**/__pycache__/
+*.egg-info/
+.pytest_cache/
+
+# Third-party binaries fetched by tools/fetch_lhm.py (verified hashes), never committed
+vendor/
+
+# Build outputs
+build/
+dist/
+
+# Secrets / signing material
+**/secrets.json
+*.pfx
+*.key
+
+# OS / editors
+Thumbs.db
+.DS_Store
+.vscode/

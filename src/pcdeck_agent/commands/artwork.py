@@ -63,7 +63,7 @@ def process(image_bytes: bytes, size: int = ART_SIZE) -> Artwork:
     return Artwork(art_id, size, size, bytes(out), _accent(img))
 
 
-def _font(names: tuple[str, ...], size: int):
+def _font_or_none(names: tuple[str, ...], size: int):
     from PIL import ImageFont
 
     for n in names:
@@ -71,7 +71,18 @@ def _font(names: tuple[str, ...], size: int):
             return ImageFont.truetype(n, size)
         except OSError:
             continue
-    return ImageFont.load_default(size)
+    return None
+
+
+def _font(names: tuple[str, ...], size: int):
+    from PIL import ImageFont
+
+    return _font_or_none(names, size) or ImageFont.load_default(size)
+
+
+# Windows fonts first (unchanged output there); Linux (DejaVu) and macOS (Arial) fallbacks after them.
+_BOLD = ("segoeuib.ttf", "arialbd.ttf", "DejaVuSans-Bold.ttf", "Arial Bold.ttf")
+_LABEL = ("seguisb.ttf", "segoeuib.ttf", "arial.ttf", "DejaVuSans-Bold.ttf", "Arial Bold.ttf")
 
 
 def _hex(c: str) -> tuple[int, int, int]:
@@ -82,7 +93,7 @@ def service_tile(service, size: int = ART_SIZE) -> Artwork:
     """Generated cover for a known online service (brand gradient + icon/letter + name).
 
     Drawn at 4x and downscaled for smooth edges. Uses Windows' own fonts (Segoe UI, Segoe Fluent
-    Icons / MDL2 Assets); falls back to Pillow's default font elsewhere."""
+    Icons / MDL2 Assets); on Linux/macOS DejaVu / Arial and the service's initial instead of the icon."""
     from PIL import Image, ImageDraw
 
     big = size * 4
@@ -101,13 +112,14 @@ def service_tile(service, size: int = ART_SIZE) -> Artwork:
     d = ImageDraw.Draw(grad)
     white = (255, 255, 255)
     cx, cy = big // 2, int(big * 0.44)
-    if service.letter:
-        f = _font(("segoeuib.ttf", "arialbd.ttf"), int(big * 0.52))
-        d.text((cx, cy), service.letter, font=f, fill=(229, 9, 20) if service.name == "Netflix" else white, anchor="mm")
-    else:
-        f = _font(("SegoeIcons.ttf", "segmdl2.ttf"), int(big * 0.40))
-        d.text((cx, cy), service.icon, font=f, fill=white, anchor="mm")
-    label = _font(("seguisb.ttf", "segoeuib.ttf", "arial.ttf"), int(big * 0.115))
+    icons = None if service.letter else _font_or_none(("SegoeIcons.ttf", "segmdl2.ttf"), int(big * 0.40))
+    if icons is not None:
+        d.text((cx, cy), service.icon, font=icons, fill=white, anchor="mm")
+    else:  # letter mark (Netflix "N"), or the service's initial where the Segoe icon fonts don't exist
+        f = _font(_BOLD, int(big * 0.52))
+        letter = service.letter or service.name[0]
+        d.text((cx, cy), letter, font=f, fill=(229, 9, 20) if service.name == "Netflix" else white, anchor="mm")
+    label = _font(_LABEL, int(big * 0.115))
     d.text((cx, int(big * 0.84)), service.name, font=label, fill=white, anchor="mm")
     img = grad.resize((size, size), Image.LANCZOS)
 

@@ -1,4 +1,4 @@
-"""Start-with-Windows switch.
+"""Start-with-Windows switch (Linux / macOS: start at login, see autostart_posix.py).
 
 Installed build: the installer registers two scheduled tasks for the current user:
   "PC Control Deck"          on demand, highest privileges (Start-menu shortcut runs it, no UAC prompt)
@@ -60,7 +60,9 @@ def _exe_command() -> str:
 
 def is_enabled() -> bool:
     if sys.platform != "win32":
-        return False
+        from . import autostart_posix
+
+        return autostart_posix.is_enabled()
     if task_exists():
         return _task_enabled(TASK_LOGON)
     import winreg
@@ -76,7 +78,9 @@ def is_enabled() -> bool:
 def set_enabled(on: bool) -> tuple[bool, str]:
     """Returns (ok, message)."""
     if sys.platform != "win32":
-        return False, "only supported on Windows"
+        from . import autostart_posix
+
+        return autostart_posix.set_enabled(on)
     if task_exists():
         r = _schtasks("/Change", "/TN", TASK_LOGON, "/ENABLE" if on else "/DISABLE")
         if r.returncode != 0:

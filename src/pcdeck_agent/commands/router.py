@@ -3,13 +3,13 @@
 Only the actions below exist; there is no generic execution path. Every request is validated
 (type, range), de-duplicated by requestId and rate-limited per device before it reaches Windows.
 Shutdown/restart exist only when the PC owner enables them in the PC app (off by default, spec §4);
-the deck also asks for confirmation. Windows gets a 10 s delay with a visible notice.
+the deck also asks for confirmation. Every OS gets a 10 s delay with a visible notice.
+Backends: WindowsBackend (below), commands/linux_media.LinuxBackend, commands/macos_media.MacBackend.
 """
 
 from __future__ import annotations
 
 import logging
-import sys
 import time
 from collections import OrderedDict, deque
 from dataclasses import dataclass
@@ -165,10 +165,11 @@ class CommandRouter:
 
 
 def default_backend(allow_power: Any = lambda: False) -> Backend | None:
-    if sys.platform != "win32":
-        return None
+    """Windows: WindowsBackend (unchanged); Linux: MPRIS + PipeWire/PulseAudio; macOS: AppleScript."""
+    from ..platforms import command_backend
+
     try:
-        return WindowsBackend(allow_power)
+        return command_backend(allow_power)
     except Exception as e:
         log.warning("command backend unavailable: %s", e)
         return None

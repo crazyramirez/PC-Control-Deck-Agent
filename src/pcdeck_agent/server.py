@@ -31,12 +31,14 @@ from .hardware.provider import HardwareMetricsProvider
 from .commands.router import CommandRouter
 from .security.credentials import CredentialStore
 from .security.pairing import PairingManager
+from .weather import Weather, WeatherError
 
 log = logging.getLogger(__name__)
 
 HELLO_TIMEOUT_S = 5.0
 HEARTBEAT_S = 5.0
 RATE_LIMIT_PER_S = 20
+WEATHER_MIN_GAP_S = 1.0  # per session: weather.search / weather.request at most once a second
 MAX_AUTH_FAILURES_PER_SESSION = 5
 MAX_AUTH_FAILURES_PER_PEER_MIN = 10
 
@@ -61,6 +63,7 @@ class ClientSession:
     authenticated: bool = False
     auth_failures: int = 0
     sent_art_id: int = 0
+    weather_at: float = 0.0  # last weather.search / weather.request served (rate limit)
     connected_at: float = field(default_factory=time.time)
     recent: deque = field(default_factory=lambda: deque(maxlen=RATE_LIMIT_PER_S + 1))
 
@@ -97,7 +100,9 @@ class AgentServer:
         agent_id: str = "",
         commands: CommandRouter | None = None,
         battery: Any = None,
+        weather: Weather | None = None,
     ) -> None:
+        self.weather = weather or Weather()
         self.commands = commands
         self.battery = battery  # hardware.battery.BatteryReader (None: not reported)
         self.provider = provider
@@ -212,6 +217,29 @@ class AgentServer:
                 await self._send_art(s)
             except ConnectionClosed:
                 pass
+
+    async def _serve_weather(self, sess: ClientSession, t: str, payload: dict[str, Any]) -> None:
+        """City search / forecast from Open-Meteo, off the event loop; errors go back as {error}."""
+        try:
+            if t == P.T_WEATHER_SEARCH:
+                q = payload.get("q") if isinstance(payload.get("q"), str) else ""
+                lang = payload.get("lang") if payload.get("lang") in ("es", "en") else "es"
+                try:
+                    body = await asyncio.to_thread(self.weather.search, q, lang)
+                except WeatherError as e:
+                    body = {"q": q[:60], "error": str(e)[:24] or "unavailable"}
+                reply = P.T_WEATHER_RESULTS
+            else:
+                try:
+                    body = await asyncio.to_thread(self.weather.forecast, payload.get("lat"), payload.get("lon"))
+                except WeatherError as e:
+                    body = {"error": str(e)[:24] or "unavailable"}
+                reply = P.T_WEATHER_DATA
+            await self._send(sess.ws, P.envelope(reply, body, device_id=self.device_id))
+        except ConnectionClosed:
+            pass
+        except Exception:
+            log.exception("weather request failed")
 
     async def _send_art(self, s: ClientSession) -> None:
         """Push the current album art once per track (binary frames, see commands/artwork.py)."""
@@ -384,6 +412,11 @@ class AgentServer:
             return
         if t == P.T_AUTH_REQUEST:
             await self._on_auth(sess, msg["payload"])
+            return
+        if t in (P.T_WEATHER_SEARCH, P.T_WEATHER_REQUEST):
+            if (not self.require_auth or sess.authenticated) and time.monotonic() - sess.weather_at >= WEATHER_MIN_GAP_S:
+                sess.weather_at = time.monotonic()
+                asyncio.create_task(self._serve_weather(sess, t, msg["payload"]))
             return
         if t == P.T_ART_REQUEST:
             # The deck missed the cover (dropped frame...): forget what was sent, push it again now.

@@ -9,6 +9,7 @@ from typing import Any
 
 from .hardware.models import TelemetrySnapshot
 from .textfit import fit_text
+from .weather import local_clock
 
 PROTOCOL_VERSION = 1
 MAX_MESSAGE_BYTES = 16 * 1024
@@ -30,11 +31,15 @@ T_AUTH_RESULT = "auth.result"
 T_COMMAND_REQUEST = "command.request"
 T_COMMAND_RESULT = "command.result"
 T_ART_REQUEST = "media.art_request"  # deck -> agent: resend the current cover (it missed it)
+T_WEATHER_SEARCH = "weather.search"  # deck -> agent: {q, lang} city search
+T_WEATHER_RESULTS = "weather.results"  # agent -> deck: {q, results[]} or {q, error}
+T_WEATHER_REQUEST = "weather.request"  # deck -> agent: {lat, lon} forecast for the chosen place
+T_WEATHER_DATA = "weather.data"  # agent -> deck: compact forecast or {error}
 
 KNOWN_TYPES = {
     T_HELLO, T_CAPABILITIES, T_SNAPSHOT, T_HEARTBEAT, T_ERROR,
     T_PAIR_REQUEST, T_PAIR_RESULT, T_AUTH_REQUEST, T_AUTH_RESULT, T_COMMAND_REQUEST, T_COMMAND_RESULT,
-    T_ART_REQUEST,
+    T_ART_REQUEST, T_WEATHER_SEARCH, T_WEATHER_RESULTS, T_WEATHER_REQUEST, T_WEATHER_DATA,
 }  # fmt: skip
 
 # Error codes
@@ -164,6 +169,7 @@ def snapshot_payload(s: TelemetrySnapshot, media: Any = None, battery: Any = Non
         "fans": [{"sensorId": f.sensor_id, "label": _name(f.label), "rpm": _num(f.rpm, 0)} for f in s.fans[:MAX_FANS]],
         "temps": _extra_temps(s),
         "notes": list(s.notes),
+        "clock": local_clock(),  # the PC clock: the deck shows its time and date
     }
 
 

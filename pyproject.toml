@@ -1,6 +1,6 @@
 [project]
 name = "pcdeck-agent"
-version = "0.4.7"
+version = "0.5.0"
 description = "PC Control Deck agent: hardware telemetry and allow-listed commands over the LAN"
 requires-python = ">=3.13,<3.14"
 # Exact pins: reproducible builds (see docs/adr/0002-agent-stack.md).

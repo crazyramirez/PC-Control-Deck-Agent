@@ -186,8 +186,10 @@ Details: [ADR 0002](docs/adr/0002-agent-stack.md), [ADR 0003](docs/adr/0003-pair
 
 **Continuous integration:** [`build.yml`](.github/workflows/build.yml) runs the tests and builds the
 app on Windows, macOS arm64 (`macos-latest`), macOS x86_64 (`macos-15-intel`) and Ubuntu 22.04 on
-every push; installers / archives are uploaded as artifacts. Pushing a tag `vX.Y.Z` publishes them as
-a GitHub Release.
+every push; installers / archives are uploaded as artifacts. A push to `main` that changes the
+version (`pcdeck_agent.__version__`, with its `## X.Y.Z` CHANGELOG section) publishes them as a
+GitHub Release from the same run, tag `vX.Y.Z` included (don't push tags by hand: the commit would
+build twice).
 
 ```
 src/pcdeck_agent/   server, protocol, pairing/credentials, hardware providers (Windows, Linux, macOS),

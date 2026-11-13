@@ -55,6 +55,10 @@ class AgentConfig:
     agent_id: str = ""  # random, stable identity advertised over mDNS (not a secret)
     mdns: bool = True
     allow_power: bool = False  # shutdown/restart from the device: opt-in in the PC app (spec §4)
+    auto_update: bool = True  # install new app releases from GitHub by itself (updater.py)
+    last_version: str = ""  # app version of the previous start: "updated to X" notice
+    update_attempt_version: str = ""  # last self-update tried, and when: no retry loop if it failed
+    update_attempt_at: float = 0.0
 
     def normalized(self) -> "AgentConfig":
         if not self.agent_id:

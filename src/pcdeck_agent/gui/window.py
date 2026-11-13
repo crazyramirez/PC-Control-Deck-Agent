@@ -249,6 +249,17 @@ class MainWindow(QWidget):
         self.allow_power.toggled.connect(self.rt.set_allow_power)
         lay.addWidget(self.allow_power)
         lay.addWidget(_muted(t("security_note")))
+        # App updates (wired by attach_updates()): automatic switch, status line, one action button.
+        self.auto_update = QCheckBox(t("auto_update"))
+        self.auto_update.setChecked(self.rt.cfg.auto_update)
+        lay.addWidget(self.auto_update)
+        row = QHBoxLayout()
+        self.update_status = _muted(t("update_current", v=__version__))
+        row.addWidget(self.update_status, 1)
+        self.update_btn = QPushButton(t("update_check"))
+        self.update_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        row.addWidget(self.update_btn, 0, Qt.AlignmentFlag.AlignTop)
+        lay.addLayout(row)
         root.addWidget(card)
 
         # Footer
@@ -403,6 +414,22 @@ class MainWindow(QWidget):
         if QMessageBox.question(self, t("app"), t("unpair_confirm", name=name)) == QMessageBox.StandardButton.Yes:
             self.rt.revoke(client_id)
             self._refresh_devices()
+
+    def attach_updates(self, ctl: QObject) -> None:
+        """Bind the app-update controller (gui/update_ctl.py) to the This PC card."""
+        self.auto_update.toggled.connect(ctl.set_auto)
+        self.update_btn.clicked.connect(ctl.on_button)
+
+        def show(text: str, button: str) -> None:
+            self.update_status.setText(text)
+            self.update_btn.setText(button)
+            self.update_btn.setVisible(bool(button))
+
+        ctl.status.connect(show)
+
+    def flashing(self) -> bool:
+        """A deck is being flashed over USB (an app update must wait)."""
+        return bool(self._flasher is not None and getattr(self._flasher, "job", None))
 
     def _open_flasher(self) -> None:
         from .flash_dialog import FlashDialog  # lazy: esptool / pyserial load only when used

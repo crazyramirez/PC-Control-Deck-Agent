@@ -3,6 +3,29 @@
 Until 0.7.0 the app lived in the `agent/` folder of the JC3248W535 deck repository; this repository
 keeps that history. Deck firmware changes are listed in each deck repository.
 
+## 0.9.0 — The app updates itself
+
+The app installs its own new releases from GitHub, on Windows, macOS and Linux
+([ADR 0007](adr/0007-app-self-update.md)).
+
+- It checks a minute after starting and every 6 hours. When the latest release is newer and has a
+  build for this system, the app downloads it (size and GitHub SHA-256 checked) and installs it.
+  The new version starts by itself, and a notification confirms *updated to X*.
+  - **Windows:** the setup runs silently, keeps the start-with-Windows and firewall choices, and
+    starts the app again (new `/AUTOUPDATE=1` option). No prompt when the app runs elevated, which
+    it does when started by Windows or from its Start-menu entry.
+  - **macOS:** the new `.app` replaces the running one.
+  - **Linux:** the new folder replaces the one in `~/.local/opt/pcdeck`.
+- *This PC*: **Update the app automatically** (on by default), the update status, and **Check for
+  updates** / **Update to X**. With automatic updates off, the app tells you and waits for the
+  click.
+- Never in the middle of a USB firmware update. A failed attempt is not retried by itself for a
+  day.
+- The Windows portable zip, a read-only location and running from source only report the new
+  version (with a link to the downloads).
+- Testing aid: `PCDECK_UPDATE_FROM=0.0.1` makes an installed build update itself to the published
+  release.
+
 ## 0.8.0 — Deck firmware over USB
 
 Install or update a deck's firmware from the app, on Windows, macOS and Linux

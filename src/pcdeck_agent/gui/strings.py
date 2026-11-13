@@ -95,6 +95,24 @@ _ES = {
     "flash_bad_image": "La imagen {name} no es válida para esta placa ({msg}); no se ha escrito nada.",
     "flash_failed": "No se pudo completar la actualización: {msg}",
     "flash_close": "Cerrar",
+    # App self-update
+    "auto_update": "Actualizar la app automáticamente",
+    "update_check": "Buscar actualizaciones",
+    "update_checking": "Buscando actualizaciones…",
+    "update_current": "Versión {v} · al día",
+    "update_available": "Versión {v} disponible",
+    "update_now": "Actualizar a {v}",
+    "update_downloading": "Descargando la versión {v}… {pct} %",
+    "update_installing": "Instalando la versión {v}: la app se reiniciará en unos segundos.",
+    "update_installed": "PC Control Deck se ha actualizado a la versión {v}.",
+    "update_waiting": "Versión {v} lista: se instalará al terminar la actualización del deck.",
+    "update_retry": "La actualización a {v} no se completó. Reinténtalo cuando quieras.",
+    "update_manual": "Versión {v} disponible: esta copia no se actualiza sola, descárgala de GitHub.",
+    "update_manual_location": "No se puede actualizar en esta ubicación: descarga la nueva versión de GitHub.",
+    "update_open_page": "Abrir descargas",
+    "update_offline": "No se pudo comprobar si hay actualizaciones.",
+    "update_denied": "Actualización cancelada: no se concedió el permiso de administrador.",
+    "update_failed": "No se pudo actualizar: {msg}",
 }
 
 _EN = {
@@ -181,6 +199,24 @@ _EN = {
     "flash_bad_image": "Image {name} is not valid for this board ({msg}); nothing was written.",
     "flash_failed": "The update could not finish: {msg}",
     "flash_close": "Close",
+    # App self-update
+    "auto_update": "Update the app automatically",
+    "update_check": "Check for updates",
+    "update_checking": "Checking for updates…",
+    "update_current": "Version {v} · up to date",
+    "update_available": "Version {v} available",
+    "update_now": "Update to {v}",
+    "update_downloading": "Downloading version {v}… {pct} %",
+    "update_installing": "Installing version {v}: the app restarts in a few seconds.",
+    "update_installed": "PC Control Deck was updated to version {v}.",
+    "update_waiting": "Version {v} ready: it installs once the deck update finishes.",
+    "update_retry": "The update to {v} did not finish. Try again whenever you like.",
+    "update_manual": "Version {v} available: this copy does not update itself, download it from GitHub.",
+    "update_manual_location": "This location cannot be updated: download the new version from GitHub.",
+    "update_open_page": "Open downloads",
+    "update_offline": "Could not check for updates.",
+    "update_denied": "Update cancelled: administrator permission was not granted.",
+    "update_failed": "Could not update: {msg}",
 }
 
 _OS_ES = {

@@ -65,6 +65,9 @@ Filename: "netsh.exe"; Parameters: "advfirewall firewall delete rule name=""{#Ap
 Filename: "netsh.exe"; Parameters: "advfirewall firewall add rule name=""{#AppName}"" dir=in action=allow program=""{app}\{#AppExe}"" protocol=TCP localport=8765 profile=private enable=yes"; Flags: runhidden waituntilterminated; Tasks: firewall
 Filename: "netsh.exe"; Parameters: "advfirewall firewall add rule name=""{#AppName}"" dir=in action=allow program=""{app}\{#AppExe}"" protocol=UDP localport=5353 profile=private enable=yes"; Flags: runhidden waituntilterminated; Tasks: firewall
 Filename: "{app}\{#AppExe}"; Description: "{cm:Launch}"; Flags: nowait postinstall skipifsilent
+; Self-update from the app (silent setup with /AUTOUPDATE=1): start the new version again, as the
+; signed-in user; the app hands itself to its elevated scheduled task (no UAC prompt).
+Filename: "{app}\{#AppExe}"; Parameters: "--minimized"; Flags: nowait runasoriginaluser; Check: IsAutoUpdate
 
 [UninstallRun]
 Filename: "taskkill.exe"; Parameters: "/IM {#AppExe} /F"; Flags: runhidden; RunOnceId: "kill"
@@ -72,6 +75,12 @@ Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -Fil
 Filename: "netsh.exe"; Parameters: "advfirewall firewall delete rule name=""{#AppName}"""; Flags: runhidden waituntilterminated; RunOnceId: "fw"
 
 [Code]
+// Started by the app's self-update (PCControlDeck-Setup-x.y.z.exe /VERYSILENT ... /AUTOUPDATE=1).
+function IsAutoUpdate: Boolean;
+begin
+  Result := ExpandConstant('{param:AUTOUPDATE|0}') = '1';
+end;
+
 // Stop a running copy before files are replaced on upgrade.
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 var

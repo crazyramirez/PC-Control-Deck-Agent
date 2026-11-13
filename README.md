@@ -17,7 +17,8 @@ the decks embed this repository's protocol fixtures in their firmware tests. Wea
 or later, the Crypto tab 0.6 or later. From 0.8.0 the app also **installs and updates the decks'
 firmware over USB**, and carries the latest firmware of every deck inside it.
 
-Current version: **0.8.0** — see [CHANGELOG](docs/CHANGELOG.md).
+Current version: **0.9.0** — see [CHANGELOG](docs/CHANGELOG.md). From 0.9.0 the app **updates
+itself** when a new release is published.
 
 ---
 
@@ -92,6 +93,12 @@ English, following the system language) has:
 - **This PC** — address and port, Bonjour discovery, sensor provider, privileges (what needs
   administrator / root on this system).
 - **Allow shutting down and restarting the PC from the device** — off by default.
+- **Update the app automatically** — on by default. The app checks GitHub a minute after starting
+  and every 6 hours. When there is a newer release it downloads it (SHA-256 checked), installs it
+  and starts again: the silent setup on Windows, the new `.app` / folder in place on macOS / Linux.
+  It never updates in the middle of a USB firmware update. Next to it, the status and **Check for
+  updates** / **Update to X**. The Windows portable zip only reports new versions
+  ([ADR 0007](docs/adr/0007-app-self-update.md)).
 - **Start with Windows** / **Start at login** — Windows: an elevated scheduled task (no UAC prompt at
   logon) so CPU temperature and other privileged sensors are readable; Linux: an entry in
   `~/.config/autostart`; macOS: a LaunchAgent (`~/Library/LaunchAgents/com.pcdeck.agent.plist`).
@@ -214,7 +221,8 @@ Common: websockets, zeroconf (mDNS), PySide6 (tray app), psutil, Pillow (album a
 pyserial (deck firmware over USB).
 Details: [ADR 0002](docs/adr/0002-agent-stack.md), [ADR 0003](docs/adr/0003-pairing-tray-installer.md),
 [ADR 0005](docs/adr/0005-cross-platform-agent.md) (Linux and macOS),
-[ADR 0006](docs/adr/0006-usb-firmware-updates.md) (deck firmware over USB).
+[ADR 0006](docs/adr/0006-usb-firmware-updates.md) (deck firmware over USB),
+[ADR 0007](docs/adr/0007-app-self-update.md) (the app updates itself).
 
 **Bundled deck firmware:** the build scripts run `tools/fetch_firmware.py` before PyInstaller. It
 puts the latest release of every deck in the catalog (`src/pcdeck_agent/flasher/boards.py`) into
@@ -233,7 +241,8 @@ build twice).
 ```
 src/pcdeck_agent/   server, protocol, pairing/credentials, hardware providers (Windows, Linux, macOS),
                     media/commands, weather, crypto, tray GUI, flasher (deck firmware over USB)
-tools/              fetch_lhm.py (LibreHardwareMonitor), fetch_firmware.py (bundled deck firmware)
+tools/              fetch_lhm.py (LibreHardwareMonitor), fetch_firmware.py (bundled deck firmware),
+                    fetch_release.py (the published builds of every system into dist/release)
 tests/              pytest (runs on Windows, Linux and macOS)
 shared/             protocol fixtures, also embedded in the deck firmware tests
 packaging/          PyInstaller spec, Inno Setup script, icons, Linux .desktop + install.sh

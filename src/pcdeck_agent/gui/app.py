@@ -22,6 +22,7 @@ from ..runtime import AgentRuntime
 from . import autostart
 from .icons import app_icon, tray_icon
 from .strings import t
+from .update_ctl import UpdateController
 from .window import Bridge, MainWindow
 
 log = logging.getLogger("pcdeck_agent.gui")
@@ -145,6 +146,17 @@ def main(argv: list[str] | None = None) -> int:
     rt.start()
     if not args.minimized:
         win.bring_to_front()
+
+    # App self-update from GitHub releases (updater.py): checks after a minute, then every 6 h.
+    updates = UpdateController(
+        cfg,
+        busy=win.flashing,
+        notify=lambda text: tray.showMessage(t("app"), text, tray_icon("ok"), 6000),
+        quit_app=app.quit,
+    )
+    win.attach_updates(updates)
+    if not args.screenshot:
+        updates.start()
 
     def shutdown() -> None:
         log.info("shutting down")

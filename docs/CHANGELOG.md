@@ -4,6 +4,13 @@ The app was "PC Control Deck" until 0.10 and "Control Deck" until 1.0. Until 0.7
 `agent/` folder of the JC3248W535 deck repository; this repository keeps that history. Deck firmware
 changes are listed in [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware/blob/main/docs/CHANGELOG.md).
 
+## 1.1.1 — Latest deck firmware: smoother ESP32-4848S040
+
+- **Bundled deck firmware: 1.2.1** for every deck. The ESP32-4848S040 answers much faster to small
+  changes (a key, a button, the clock): it no longer copies its whole screen to the panel for each
+  of them. On every deck, the page under a full-screen sheet (Wi-Fi and its keyboard, place search,
+  pairing, the setup assistant, the screensaver) is no longer drawn while hidden.
+
 ## 1.1.0 — A fourth deck: Guition ESP32-4848S040
 
 - **The Guition ESP32-4848S040** (4" 480×480 square) joins the decks: *Update deck firmware*

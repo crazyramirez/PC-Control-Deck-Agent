@@ -78,7 +78,12 @@ def _get(url: str, accept: str, timeout: float, token: str | None = None) -> Any
 def latest(board: Board, timeout: float = TIMEOUT_S, token: str | None = None) -> Release:
     """``token``: build-time only (CI's GITHUB_TOKEN lifts the per-IP API limit); never sent with
     downloads, whose redirects leave github.com."""
-    url = API.format(owner=OWNER, repo=board.repo)
+    return latest_of(board.repo, timeout, token)
+
+
+def latest_of(repo: str, timeout: float = TIMEOUT_S, token: str | None = None) -> Release:
+    """The latest release of one of the project's repositories (``OWNER/<repo>``)."""
+    url = API.format(owner=OWNER, repo=repo)
     try:
         with _get(url, "application/vnd.github+json", timeout, token) as r:
             data = json.loads(r.read().decode("utf-8"))

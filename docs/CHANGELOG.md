@@ -22,6 +22,9 @@ Install or update a deck's firmware from the app, on Windows, macOS and Linux
   a sound ESP image for the deck's chip (partition table, bootloader and app headers, checksum,
   hash). A bad or missing image stops the app build.
 - esptool 5.6.0 as a library (with pyserial). Linux: the user needs serial port access (`dialout`).
+- Developer tool: `tools/fetch_release.py` puts the latest published app release (Windows, Linux,
+  macOS builds from CI, SHA-256 checked) into `dist/release/<system>/` and clears older versions
+  from `dist/`.
 
 ## 0.7.0 — Linux and macOS
 

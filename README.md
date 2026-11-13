@@ -17,7 +17,7 @@ the decks embed this repository's protocol fixtures in their firmware tests. Wea
 or later, the Crypto tab 0.6 or later. From 0.8.0 the app also **installs and updates the decks'
 firmware over USB**, and carries the latest firmware of every deck inside it.
 
-Current version: **0.10.1** — see [CHANGELOG](docs/CHANGELOG.md). From 0.9.0 the app **updates
+Current version: **0.11.0** — see [CHANGELOG](docs/CHANGELOG.md). From 0.9.0 the app **updates
 itself** when a new release is published.
 
 ---

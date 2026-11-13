@@ -3,6 +3,14 @@
 Until 0.7.0 the app lived in the `agent/` folder of the JC3248W535 deck repository; this repository
 keeps that history. Deck firmware changes are listed in each deck repository.
 
+## 0.11.0 — Latest deck firmware: Today follows the weather
+
+- **Bundled deck firmware:** JC1060P470C 0.13.0, JC4827W543 0.13.0 and JC3248W535 0.14.0. The
+  Today page puts a photograph of the current weather behind the clock (sun, clouds, fog, rain,
+  storm, snow…, by day or by night; a blue veil when it is cold, a warm one when it is hot); on the
+  7" deck rain and snow fall over it and storms flash. *Settings › Time & weather › Weather
+  background* on the deck turns it off.
+
 ## 0.10.1 — Latest deck firmware
 
 - **Bundled deck firmware:** JC1060P470C 0.12.6, JC4827W543 0.12.4 and JC3248W535 0.13.3. While

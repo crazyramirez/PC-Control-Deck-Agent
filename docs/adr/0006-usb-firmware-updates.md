@@ -27,8 +27,10 @@ deck models will follow.
    Adding a model is one entry, a firmware that answers `id`, and a firmware CI that publishes
    `pcdeck-<variant>-<version>-merged.bin`.
 3. **Recognising the deck without touching it** (`flasher/probe.py`):
-   - Ports with Espressif's USB VID (0x303A) are opened with DTR/RTS released, so the chip is not
-     reset, and asked `id` → `pcdeck board=<key> fw=<version>`.
+   - Ports with Espressif's USB VID (0x303A) — and, since 1.1, the USB-UART bridges a deck may sit
+     behind (CH340, CH343, CP210x: `USB_UART_BRIDGES`; the ESP32-4848S040's USB-C is a CH340) — are
+     opened with DTR/RTS released, so the chip is not reset (a bridge's auto-reset circuit stays
+     idle too), and asked `id` → `pcdeck board=<key> fw=<version>`.
    - Firmware from before `id` answers `status`, and the model comes from its lines:
      `touch GT911 … 1024x600` is the JC1060P470C, `480x272` the JC4827W543, and
      `screen … | touch presses=` the JC3248W535.

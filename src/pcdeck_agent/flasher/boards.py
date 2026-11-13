@@ -46,6 +46,8 @@ BOARDS: tuple[Board, ...] = (
     Board("JC1060P470C", 'Guition JC1060P470C · 7"', "ESP32-P4", (("JC1060P470C", 0), ("JC1060P470C_r3", 3))),
     Board("JC4827W543", 'Guition JC4827W543 · 4.3"', "ESP32-S3", (("JC4827W543", 0),)),
     Board("JC3248W535", 'Guition JC3248W535 · 3.5"', "ESP32-S3", (("JC3248W535", 0),)),
+    # USB-C through a CH340 USB-UART bridge (probe.USB_UART_BRIDGES), not the S3's USB-Serial/JTAG.
+    Board("ESP32_4848S040", 'Guition ESP32-4848S040 · 4"', "ESP32-S3", (("ESP32_4848S040", 0),)),
 )
 
 

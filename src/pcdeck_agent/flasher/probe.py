@@ -16,7 +16,14 @@ from typing import Any, Protocol
 
 from .boards import Board, by_key
 
-ESPRESSIF_VID = 0x303A  # USB-Serial/JTAG of the ESP32-S3 / ESP32-P4 (the decks' USB-C)
+ESPRESSIF_VID = 0x303A  # USB-Serial/JTAG of the ESP32-S3 / ESP32-P4 (most decks' USB-C)
+# USB-UART bridges in front of UART0 on decks whose S3 USB pins drive the panel (ESP32-4848S040:
+# CH340). Their DTR / RTS drive the board's auto-reset circuit; released, it does not reset.
+USB_UART_BRIDGES = frozenset({
+    (0x1A86, 0x7523),  # WCH CH340
+    (0x1A86, 0x55D3),  # WCH CH343
+    (0x10C4, 0xEA60),  # Silicon Labs CP210x
+})
 BAUD = 115200
 
 _ID = re.compile(r"pcdeck board=([A-Za-z0-9_-]+) fw=(\d+\.\d+\.\d+)")
@@ -29,7 +36,7 @@ _SCREEN_535 = re.compile(r"screen (?:on|off) \| touch presses=")
 @dataclass(frozen=True)
 class Port:
     device: str  # COM6, /dev/ttyACM0, /dev/cu.usbmodem1101
-    serial_number: str  # the chip's MAC on Espressif USB-Serial/JTAG
+    serial_number: str  # the chip's MAC on Espressif USB-Serial/JTAG ("" behind most USB-UART bridges)
     description: str
 
 
@@ -42,14 +49,21 @@ class Probe:
     error: str | None = None  # "busy" / "denied" / other text; the port could not be opened
 
 
+def is_candidate(vid: int | None, pid: int | None) -> bool:
+    """An Espressif USB-Serial/JTAG port, or a USB-UART bridge a deck may sit behind."""
+    return vid == ESPRESSIF_VID or (vid, pid) in USB_UART_BRIDGES
+
+
 def candidate_ports() -> list[Port]:
-    """Serial ports of Espressif chips (VID 0x303A), sorted by device name."""
+    """Serial ports that may be a deck (is_candidate), sorted by device name. A bridge port may be
+    another device: probing only sends it the text commands ``id`` / ``status``, which a deck
+    answers; nothing is flashed unless the user picks a deck."""
     from serial.tools import list_ports
 
     found = [
         Port(p.device, p.serial_number or "", p.description or "")
         for p in list_ports.comports()
-        if p.vid == ESPRESSIF_VID
+        if is_candidate(p.vid, p.pid)
     ]
     return sorted(found, key=lambda p: p.device)
 

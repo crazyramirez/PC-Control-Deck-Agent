@@ -34,6 +34,15 @@ def test_catalog():
     assert by_key("nope") is None and by_key(None) is None
     assert [b.key for b in for_chip("ESP32-P4")] == ["JC1060P470C"]
     assert len(for_chip(None)) == len(BOARDS)
+    sq = by_key("ESP32_4848S040")
+    assert sq.chip == "ESP32-S3" and sq.image("1.2.0", sq.env(0)) == "pcdeck-ESP32_4848S040-1.2.0-merged.bin"
+
+
+def test_candidate_ports():
+    assert probe.is_candidate(0x303A, 0x1001)  # S3 / P4 USB-Serial/JTAG
+    assert probe.is_candidate(0x1A86, 0x7523)  # CH340 (ESP32-4848S040)
+    assert not probe.is_candidate(0x2341, 0x0043)  # some other USB serial device
+    assert not probe.is_candidate(None, None)  # Bluetooth / built-in COM ports
 
 
 def test_variant_and_image_names():

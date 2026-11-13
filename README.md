@@ -12,6 +12,7 @@ One app serves every deck that speaks protocol v1:
 | Guition **JC1060P470C** — 7" 1024×600 landscape, ESP32-P4 + ESP32-C6 (navigation rail, Crypto tab, setup assistant) | [JC1060P470C](https://github.com/crazyramirez/DECKY-Firmware/blob/main/docs/decks/JC1060P470C.md) |
 | Guition **JC4827W543** — 4.3" 480×272 landscape (navigation rail, Crypto tab, setup assistant) | [JC4827W543](https://github.com/crazyramirez/DECKY-Firmware/blob/main/docs/decks/JC4827W543.md) |
 | Guition **JC3248W535** — 3.5" 320×480 portrait (bottom tabs, Crypto tab, setup wizard) | [JC3248W535](https://github.com/crazyramirez/DECKY-Firmware/blob/main/docs/decks/JC3248W535.md) |
+| Guition **ESP32-4848S040** — 4" 480×480 square (bottom tabs, Crypto tab, setup wizard; USB through a CH340) | [ESP32-4848S040](https://github.com/crazyramirez/DECKY-Firmware/blob/main/docs/decks/ESP32_4848S040.md) |
 
 All deck firmware comes from one repository, [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware):
 one version for every deck, one release with every deck's images.
@@ -21,7 +22,7 @@ firmware tests embed this repository's protocol fixtures. Weather needs app 0.5 
 tab 0.6 or later. From 0.8.0 the app also **installs and updates the decks' firmware over USB**, and
 carries the latest firmware of every deck inside it.
 
-Current version: **1.0.1** — see [CHANGELOG](docs/CHANGELOG.md). From 0.9.0 the app **updates
+Current version: **1.1.0** — see [CHANGELOG](docs/CHANGELOG.md). From 0.9.0 the app **updates
 itself** when a new release is published.
 
 ---
@@ -80,7 +81,8 @@ How it works:
   [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware/releases): one version for all
   decks, one release with every deck's images, named after the deck —
   `pcdeck-<DECK>-<ver>.bin` (the app part) and `pcdeck-<DECK>-<ver>-merged.bin` (the whole flash),
-  where `<DECK>` is `JC1060P470C`, `JC1060P470C_r3` (ESP32-P4 v3.x), `JC4827W543` or `JC3248W535`.
+  where `<DECK>` is `JC1060P470C`, `JC1060P470C_r3` (ESP32-P4 v3.x), `JC4827W543`, `JC3248W535` or
+  `ESP32_4848S040`.
   The app uses the merged images.
 - **The firmware is inside the app.** Every app release carries the latest DECKY-Firmware release,
   so updating works offline. When DECKY-Firmware has a newer release than the one bundled, the app

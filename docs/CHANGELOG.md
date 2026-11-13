@@ -4,6 +4,16 @@ The app was "PC Control Deck" until 0.10 and "Control Deck" until 1.0. Until 0.7
 `agent/` folder of the JC3248W535 deck repository; this repository keeps that history. Deck firmware
 changes are listed in [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware/blob/main/docs/CHANGELOG.md).
 
+## 1.1.0 — A fourth deck: Guition ESP32-4848S040
+
+- **The Guition ESP32-4848S040** (4" 480×480 square) joins the decks: *Update deck firmware*
+  recognises it on USB and flashes it. Its USB-C is a CH340 USB-UART bridge, so the updater now
+  also looks at CH340 / CH343 / CP210x ports (only a deck answers there; nothing is flashed unless
+  you pick it). Pairing works as with the other decks.
+- **Bundled deck firmware: 1.2.0** for every deck, the ESP32-4848S040 included. On every deck the
+  setup assistant now runs at full brightness; the level set in the deck's *Settings* comes back
+  when it closes.
+
 ## 1.0.1 — Latest deck firmware: screensaver on demand
 
 - **Bundled deck firmware: 1.1.0** for every deck. A double tap on the status corner at the top

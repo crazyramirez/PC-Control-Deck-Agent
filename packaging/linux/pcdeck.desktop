@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Name=PC Control Deck
-Comment=Hardware telemetry and media control for the PC Control Deck
+Name=Control Deck
+Comment=Hardware telemetry and media control for your PC Control Deck touch deck
 Exec=@EXEC@
 Icon=pcdeck
 Terminal=false

@@ -2,7 +2,7 @@
 
 Service: ``_pcdeck._tcp.local.`` on the agent port, TXT records:
   id=<agent id>  name=<PC name>  v=<protocol major>
-The advertisement only says "a PC Control Deck agent lives here"; it carries no secret. Being
+The advertisement only says "a Control Deck agent lives here"; it carries no secret. Being
 discoverable does not grant access: a deck must still pair with the one-time code.
 """
 

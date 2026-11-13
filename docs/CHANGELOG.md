@@ -1,7 +1,21 @@
-# Changelog — PC Control Deck desktop app
+# Changelog — Control Deck (the PC Control Deck desktop app)
 
 Until 0.7.0 the app lived in the `agent/` folder of the JC3248W535 deck repository; this repository
 keeps that history. Deck firmware changes are listed in each deck repository.
+
+## 0.10.0 — Control Deck; latest deck firmware
+
+- **The app is now called Control Deck.** The new name shows in the window, the tray, the
+  installer, the Start-menu and desktop shortcuts, the scheduled tasks, the macOS app, the Linux
+  menu entry and the notifications.
+- **Upgrading keeps the paired decks and settings**: the data folders keep their names.
+  - **Windows:** the setup removes the old shortcuts, scheduled tasks and firewall rule named
+    "PC Control Deck", and an upgraded install keeps its folder.
+  - **Linux:** the menu and autostart entries are renamed at the first start.
+  - **macOS:** an app updated by itself keeps its old file name until it is installed again from
+    the `.dmg`.
+- **Bundled deck firmware:** JC1060P470C 0.12.5, JC4827W543 0.12.3 (setup assistant without the
+  coins step; the city step needs only Wi-Fi) and JC3248W535 0.13.2.
 
 ## 0.9.0 — The app updates itself
 

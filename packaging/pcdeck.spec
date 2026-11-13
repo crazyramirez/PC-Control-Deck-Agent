@@ -1,7 +1,7 @@
 # PyInstaller spec for the PC app (one-folder, windowed) on Windows, macOS and Linux.
 #   Windows: scripts/build-agent.ps1 (prepares build/pcdeck.ico, build/version_info.txt and vendor/lhm-*)
 #            -> dist/PCControlDeck/PCControlDeck.exe (+ Inno Setup installer)
-#   macOS:   scripts/build-agent.sh (prepares build/pcdeck.png) -> dist/PC Control Deck.app (LSUIElement)
+#   macOS:   scripts/build-agent.sh (prepares build/pcdeck.png) -> dist/Control Deck.app (LSUIElement)
 #   Linux:   scripts/build-agent.sh -> dist/PCControlDeck/PCControlDeck (packed as .tar.gz)
 import os
 import re
@@ -79,20 +79,20 @@ coll = COLLECT(exe, a.binaries, a.datas, name="PCControlDeck")
 if IS_MAC:
     app = BUNDLE(
         coll,
-        name="PC Control Deck.app",
+        name="Control Deck.app",
         icon=str(ICON) if ICON.exists() else None,
         bundle_identifier="com.pcdeck.agent",
         version=VERSION,
         info_plist={
-            "CFBundleName": "PC Control Deck",
-            "CFBundleDisplayName": "PC Control Deck",
+            "CFBundleName": "Control Deck",
+            "CFBundleDisplayName": "Control Deck",
             "CFBundleShortVersionString": VERSION,
             "CFBundleVersion": VERSION,
             "LSUIElement": True,  # menu-bar app: no Dock icon
             "LSMinimumSystemVersion": "14.0",  # PySide6 6.12 wheels are macosx_14_0
             "NSHighResolutionCapable": True,
-            "NSAppleEventsUsageDescription": "PC Control Deck controls Music and Spotify from your deck and, only if you allow it, shuts down or restarts the Mac.",
-            "NSLocalNetworkUsageDescription": "PC Control Deck sends telemetry to your paired deck on the local network.",
+            "NSAppleEventsUsageDescription": "Control Deck controls Music and Spotify from your deck and, only if you allow it, shuts down or restarts the Mac.",
+            "NSLocalNetworkUsageDescription": "Control Deck sends telemetry to your paired deck on the local network.",
             "NSBonjourServices": ["_pcdeck._tcp"],
         },
     )

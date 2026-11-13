@@ -21,7 +21,8 @@ CONFIG_SCHEMA = 1
 def app_dir() -> Path:
     """Per-user data dir: config.json and the paired-device store.
 
-    Windows ``%LOCALAPPDATA%\\PcControlDeck``; macOS ``~/Library/Application Support/PC Control Deck``;
+    Windows ``%LOCALAPPDATA%\\PcControlDeck``; macOS ``~/Library/Application Support/PC Control Deck``
+    (the app's name before 0.10: kept, it holds the paired decks and settings);
     Linux ``$XDG_CONFIG_HOME/pcdeck`` (``~/.config/pcdeck``)."""
     if sys.platform == "win32":
         base = Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local"))

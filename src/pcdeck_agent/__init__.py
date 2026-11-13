@@ -1,3 +1,3 @@
-"""PC Control Deck agent: hardware telemetry + allow-listed commands over the LAN."""
+"""Control Deck (the PC Control Deck desktop app): hardware telemetry + allow-listed commands over the LAN."""
 
-__version__ = "0.9.0"
+__version__ = "0.10.0"

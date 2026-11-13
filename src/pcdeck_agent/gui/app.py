@@ -1,4 +1,4 @@
-"""PC Control Deck tray application (entry point of the installed .exe).
+"""Control Deck tray application (entry point of the installed .exe).
 
   PCControlDeck.exe              start (or bring the running instance to front) and show the window
   PCControlDeck.exe --minimized  start in the tray only (used by the start-with-Windows task)
@@ -80,7 +80,7 @@ def main(argv: list[str] | None = None) -> int:
     args, _ = parser.parse_known_args(argv)
 
     app = QApplication(sys.argv[:1])
-    app.setApplicationName("PC Control Deck")
+    app.setApplicationName("Control Deck")
     app.setQuitOnLastWindowClosed(False)
     app.setWindowIcon(app_icon())
 
@@ -97,7 +97,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.screenshot:
         cfg.port, cfg.mdns = 0, False  # ephemeral port, no advertisement
     log_path = setup_logging(cfg.log_level, log_dir())
-    log.info("PC Control Deck %s (tray), config %s, log %s", __version__, cfg_path, log_path)
+    log.info("Control Deck %s (tray), config %s, log %s", __version__, cfg_path, log_path)
+    if sys.platform.startswith("linux") and getattr(sys, "frozen", False):
+        from . import autostart_posix
+
+        for p in autostart_posix.migrate_names():  # "PC Control Deck" -> "Control Deck" (0.10)
+            log.info("renamed the app in %s", p)
 
     rt = AgentRuntime(cfg, _provider_factory(args.fake))
     bridge = Bridge()

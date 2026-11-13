@@ -148,7 +148,7 @@ def swap_script(old: PurePath, new: PurePath, workdir: PurePath, relaunch: list[
     q = shlex.quote
     bak = q(str(old) + ".old-update")
     return f"""#!/bin/sh
-# PC Control Deck self-update: replace the app once it has quit, then start the new one.
+# Control Deck self-update: replace the app once it has quit, then start the new one.
 i=0
 while kill -0 {pid} 2>/dev/null && [ $i -lt 120 ]; do sleep 0.5; i=$((i+1)); done
 rm -rf {bak}

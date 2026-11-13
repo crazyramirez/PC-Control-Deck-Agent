@@ -26,8 +26,8 @@ log = logging.getLogger(__name__)
 
 POWER_DELAY_S = 10
 MESSAGES = {
-    "shutdown": "PC Control Deck: apagado solicitado desde el dispositivo / shutdown requested from the device",
-    "restart": "PC Control Deck: reinicio solicitado desde el dispositivo / restart requested from the device",
+    "shutdown": "Control Deck: apagado solicitado desde el dispositivo / shutdown requested from the device",
+    "restart": "Control Deck: reinicio solicitado desde el dispositivo / restart requested from the device",
 }
 Runner = Callable[[list[str]], bool]
 
@@ -62,12 +62,12 @@ def power_commands(os_name: str, op: str) -> tuple[list[str], list[str] | None]:
     """(action command, notice command or None) for 'shutdown' / 'restart'."""
     msg = MESSAGES[op]
     if os_name == "linux":
-        notice = ["notify-send", "-u", "critical", "-a", "PC Control Deck", msg] if shutil.which("notify-send") else None
+        notice = ["notify-send", "-u", "critical", "-a", "Control Deck", msg] if shutil.which("notify-send") else None
         return ["systemctl", "poweroff" if op == "shutdown" else "reboot"], notice
     verb = "shut down" if op == "shutdown" else "restart"
     return (
         ["osascript", "-e", f'tell application "System Events" to {verb}'],
-        ["osascript", "-e", f'display notification "{msg}" with title "PC Control Deck"'],
+        ["osascript", "-e", f'display notification "{msg}" with title "Control Deck"'],
     )
 
 

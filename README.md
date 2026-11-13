@@ -1,6 +1,6 @@
-# PC Control Deck — desktop app
+# Control Deck — the PC Control Deck desktop app
 
-The PC side of **PC Control Deck**: a small tray app for **Windows, Linux and macOS** that reads the
+**Control Deck** is the PC side of **PC Control Deck** (named "PC Control Deck" itself until 0.10): a small tray app for **Windows, Linux and macOS** that reads the
 computer's sensors, media session, weather and crypto prices, and serves them over a paired,
 **LAN-only** WebSocket to an ESP32 touch deck. No cloud, no account.
 
@@ -17,7 +17,7 @@ the decks embed this repository's protocol fixtures in their firmware tests. Wea
 or later, the Crypto tab 0.6 or later. From 0.8.0 the app also **installs and updates the decks'
 firmware over USB**, and carries the latest firmware of every deck inside it.
 
-Current version: **0.9.0** — see [CHANGELOG](docs/CHANGELOG.md). From 0.9.0 the app **updates
+Current version: **0.10.0** — see [CHANGELOG](docs/CHANGELOG.md). From 0.9.0 the app **updates
 itself** when a new release is published.
 
 ---
@@ -44,7 +44,7 @@ Download the build for your system from the [Releases](https://github.com/crazyr
 |---|---|---|---|
 | **Windows 10/11** | `PCControlDeck-Setup-<ver>.exe` (or `…-windows-x64-portable.zip`) | Run the installer (admin): tray app, optional start with Windows (elevated), firewall rules for **private networks only** | — |
 | **Linux** (x86_64) | `PCControlDeck-<ver>-linux-x86_64.tar.gz` | `tar xzf PCControlDeck-*.tar.gz && cd PCControlDeck-*/ && ./install.sh` — per user, no root: app in `~/.local/opt/pcdeck`, menu entry and icon; `./install.sh --uninstall` removes them | Built on Ubuntu 22.04 (glibc ≥ 2.35). Qt needs `libxcb-cursor0` (`sudo apt install libxcb-cursor0`). The tray needs a StatusNotifier host (GNOME: the AppIndicator extension, preinstalled on Ubuntu). If a firewall is active, allow TCP 8765 and UDP 5353 from your LAN (e.g. `sudo ufw allow from 192.168.0.0/16 to any port 8765 proto tcp`). |
-| **macOS 14+** | `PCControlDeck-<ver>-macos-arm64.dmg` (Apple Silicon) or `…-macos-x86_64.dmg` (Intel); `.zip` alternatives | Open the `.dmg`, drag **PC Control Deck** to Applications | The app is **not signed**: the first launch is blocked by Gatekeeper. macOS 15+: try to open it once, then *System Settings › Privacy & Security › Open Anyway*; macOS 14: right-click the app › *Open*. (Or: `xattr -dr com.apple.quarantine "/Applications/PC Control Deck.app"`.) Allow incoming connections / local network access when asked, and *Automation* access to Music / Spotify / System Events the first time the deck controls them. |
+| **macOS 14+** | `PCControlDeck-<ver>-macos-arm64.dmg` (Apple Silicon) or `…-macos-x86_64.dmg` (Intel); `.zip` alternatives | Open the `.dmg`, drag **Control Deck** to Applications | The app is **not signed**: the first launch is blocked by Gatekeeper. macOS 15+: try to open it once, then *System Settings › Privacy & Security › Open Anyway*; macOS 14: right-click the app › *Open*. (Or: `xattr -dr com.apple.quarantine "/Applications/Control Deck.app"`.) Allow incoming connections / local network access when asked, and *Automation* access to Music / Spotify / System Events the first time the deck controls them. |
 
 ## Pair a deck
 

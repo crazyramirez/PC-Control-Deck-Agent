@@ -1,10 +1,11 @@
-; Inno Setup 6 script for PC Control Deck (Windows agent + tray app).
+; Inno Setup 6 script for Control Deck (Windows agent + tray app; "PC Control Deck" before 0.10).
 ; Built by scripts/build-agent.ps1:  ISCC.exe /DAppVersion=x.y.z installer.iss
 
 #ifndef AppVersion
   #define AppVersion "0.0.0"
 #endif
-#define AppName "PC Control Deck"
+#define AppName "Control Deck"
+#define OldAppName "PC Control Deck"
 #define AppExe "PCControlDeck.exe"
 
 [Setup]
@@ -38,8 +39,8 @@ es.TaskAutostart=Iniciar con Windows (recomendado)
 en.TaskAutostart=Start with Windows (recommended)
 es.TaskFirewall=Permitir que los dispositivos se conecten en redes privadas (recomendado)
 en.TaskFirewall=Allow devices to connect on private networks (recommended)
-es.Launch=Abrir PC Control Deck
-en.Launch=Open PC Control Deck
+es.Launch=Abrir Control Deck
+en.Launch=Open Control Deck
 es.GroupOptions=Opciones:
 en.GroupOptions=Options:
 
@@ -52,6 +53,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "..\dist\PCControlDeck\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "setup-tasks.ps1"; DestDir: "{app}"; Flags: ignoreversion
 
+[InstallDelete]
+; Upgrade from "PC Control Deck" (before 0.10): its shortcuts go (the folder stays, see AppId).
+Type: files; Name: "{autoprograms}\{#OldAppName}.lnk"
+Type: files; Name: "{autodesktop}\{#OldAppName}.lnk"
+
 [Icons]
 Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExe}"
 Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks: desktopicon
@@ -62,6 +68,7 @@ Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -Fil
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\setup-tasks.ps1"" -Exe ""{app}\{#AppExe}"" -Autostart 0"; Flags: runhidden waituntilterminated; Tasks: not autostart
 ; Firewall: inbound only for this program, private profile only (agent WebSocket + mDNS replies)
 Filename: "netsh.exe"; Parameters: "advfirewall firewall delete rule name=""{#AppName}"""; Flags: runhidden waituntilterminated; Tasks: firewall
+Filename: "netsh.exe"; Parameters: "advfirewall firewall delete rule name=""{#OldAppName}"""; Flags: runhidden waituntilterminated
 Filename: "netsh.exe"; Parameters: "advfirewall firewall add rule name=""{#AppName}"" dir=in action=allow program=""{app}\{#AppExe}"" protocol=TCP localport=8765 profile=private enable=yes"; Flags: runhidden waituntilterminated; Tasks: firewall
 Filename: "netsh.exe"; Parameters: "advfirewall firewall add rule name=""{#AppName}"" dir=in action=allow program=""{app}\{#AppExe}"" protocol=UDP localport=5353 profile=private enable=yes"; Flags: runhidden waituntilterminated; Tasks: firewall
 Filename: "{app}\{#AppExe}"; Description: "{cm:Launch}"; Flags: nowait postinstall skipifsilent
@@ -73,6 +80,7 @@ Filename: "{app}\{#AppExe}"; Parameters: "--minimized"; Flags: nowait runasorigi
 Filename: "taskkill.exe"; Parameters: "/IM {#AppExe} /F"; Flags: runhidden; RunOnceId: "kill"
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\setup-tasks.ps1"" -Remove"; Flags: runhidden waituntilterminated; RunOnceId: "tasks"
 Filename: "netsh.exe"; Parameters: "advfirewall firewall delete rule name=""{#AppName}"""; Flags: runhidden waituntilterminated; RunOnceId: "fw"
+Filename: "netsh.exe"; Parameters: "advfirewall firewall delete rule name=""{#OldAppName}"""; Flags: runhidden waituntilterminated; RunOnceId: "fwold"
 
 [Code]
 // Started by the app's self-update (PCControlDeck-Setup-x.y.z.exe /VERYSILENT ... /AUTOUPDATE=1).

@@ -3,6 +3,12 @@
 Until 0.7.0 the app lived in the `agent/` folder of the JC3248W535 deck repository; this repository
 keeps that history. Deck firmware changes are listed in each deck repository.
 
+## 0.10.1 — Latest deck firmware
+
+- **Bundled deck firmware:** JC1060P470C 0.12.6, JC4827W543 0.12.4 and JC3248W535 0.13.3. While
+  joining a Wi-Fi network the deck now says *Connecting to <network>…* instead of a false *Could
+  not connect* (shown before when the first tries failed).
+
 ## 0.10.0 — Control Deck; latest deck firmware
 
 - **The app is now called Control Deck.** The new name shows in the window, the tray, the

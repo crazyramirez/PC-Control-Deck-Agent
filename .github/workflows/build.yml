@@ -2,6 +2,7 @@
 # Releases: a push to main whose version (pcdeck_agent.__version__) has no GitHub Release yet publishes
 # one from the same run, creating the tag vX.Y.Z (GITHUB_TOKEN: no second run). Bump the version, add
 # its "## X.Y.Z" CHANGELOG section, push. Don't push tags by hand: that would build the commit twice.
+# Storage: after the release step only the newest release, its tag and the current run are kept.
 name: build
 
 on:
@@ -95,6 +96,7 @@ jobs:
           name: pcdeck-agent-${{ matrix.name }}
           path: dist/release/*
           if-no-files-found: error
+          retention-days: 1
 
   release:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
@@ -102,6 +104,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: write
     steps:
       - uses: actions/checkout@v7
 
@@ -156,3 +159,27 @@ jobs:
           body_path: notes.md
           files: assets/*
           generate_release_notes: true
+
+      # GitHub storage: once this version's release exists, keep only it. Older releases go (with
+      # their tags), every earlier workflow run goes (its logs and artifacts with it), and this run's
+      # artifacts go too: the release holds the same files.
+      - name: Keep only the latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ steps.ver.outputs.tag }}
+        run: |
+          gh release view "$TAG" --json tagName > /dev/null  # nothing is deleted without the current release
+          for t in $(gh release list --limit 1000 --json tagName -q '.[].tagName'); do
+            if [ "$t" != "$TAG" ]; then echo "delete release $t"; gh release delete "$t" --yes --cleanup-tag; fi
+          done
+          for t in $(gh api "repos/$GH_REPO/git/matching-refs/tags/v" -q '.[].ref | sub("refs/tags/"; "")'); do
+            if [ "$t" != "$TAG" ]; then echo "delete tag $t"; gh api -X DELETE "repos/$GH_REPO/git/refs/tags/$t" --silent; fi
+          done
+          for id in $(gh api "repos/$GH_REPO/actions/runs?per_page=100" --paginate \
+                        -q ".workflow_runs[] | select(.id != $GITHUB_RUN_ID and .status == \"completed\") | .id"); do
+            echo "delete run $id"; gh api -X DELETE "repos/$GH_REPO/actions/runs/$id" --silent
+          done
+          for id in $(gh api "repos/$GH_REPO/actions/runs/$GITHUB_RUN_ID/artifacts" -q '.artifacts[].id'); do
+            echo "delete artifact $id"; gh api -X DELETE "repos/$GH_REPO/actions/artifacts/$id" --silent
+          done

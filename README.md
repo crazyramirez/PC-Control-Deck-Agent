@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/header.webp" width="100%" alt="DECKY Agent: the desktop app behind your deck — sensors, media, weather and crypto over your LAN. Windows · Linux · macOS. No cloud."></p>
+
 # DECKY Agent — the desktop app of DECKY
 
 **DECKY Agent** is the PC side of **DECKY** (*Control Deck*), a family of ESP32 touch decks: a small

@@ -24,7 +24,7 @@ firmware tests embed this repository's protocol fixtures. Weather needs app 0.5 
 tab 0.6 or later. From 0.8.0 the app also **installs and updates the decks' firmware over USB**, and
 carries the latest firmware of every deck inside it.
 
-Current version: **1.1.1** — see [CHANGELOG](docs/CHANGELOG.md). From 0.9.0 the app **updates
+Current version: **1.1.2** — see [CHANGELOG](docs/CHANGELOG.md). From 0.9.0 the app **updates
 itself** when a new release is published.
 
 ---

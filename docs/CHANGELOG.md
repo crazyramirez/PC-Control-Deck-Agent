@@ -4,6 +4,12 @@ The app was "PC Control Deck" until 0.10 and "Control Deck" until 1.0. Until 0.7
 `agent/` folder of the JC3248W535 deck repository; this repository keeps that history. Deck firmware
 changes are listed in [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware/blob/main/docs/CHANGELOG.md).
 
+## 1.1.2 — Latest deck firmware: no random restarts after power-on
+
+- **Bundled deck firmware: 1.2.2** for every deck. A deck could restart by itself a few seconds
+  after power-on (its first web request meeting the clock's time-server lookup); that is fixed. When
+  the screen comes back on with a full-screen sheet open, the whole screen is redrawn.
+
 ## 1.1.1 — Latest deck firmware: smoother ESP32-4848S040
 
 - **Bundled deck firmware: 1.2.1** for every deck. The ESP32-4848S040 answers much faster to small

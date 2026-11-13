@@ -1,6 +1,6 @@
 [project]
 name = "pcdeck-agent"
-version = "0.7.0"
+version = "0.8.0"
 description = "PC Control Deck agent: hardware telemetry and allow-listed commands over the LAN"
 requires-python = ">=3.13,<3.14"
 # Exact pins: reproducible builds (see docs/adr/0002-agent-stack.md).
@@ -18,6 +18,9 @@ dependencies = [
     "winrt-Windows.Foundation.Collections==4!10.0.28000.2957; sys_platform == 'win32'",
     "winrt-Windows.Storage.Streams==4!10.0.28000.2957; sys_platform == 'win32'",
     "Pillow==13.0.0",
+    # Deck firmware updates over USB (gui/flash_dialog.py): Espressif's flasher, as a library.
+    # Brings pyserial (port detection / the deck's console) and esp-pylib.
+    "esptool==5.6.0",
     # Linux: MPRIS media control over D-Bus (pure Python) and NVIDIA sensors through NVML (ctypes;
     # without the NVIDIA driver it simply reports nothing). macOS needs no extra package (ctypes + osascript).
     "jeepney==0.9.0; sys_platform == 'linux'",

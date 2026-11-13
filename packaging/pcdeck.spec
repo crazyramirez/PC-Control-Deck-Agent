@@ -3,6 +3,7 @@
 #            -> dist/PCControlDeck/PCControlDeck.exe (+ Inno Setup installer)
 #   macOS:   scripts/build-agent.sh (prepares build/pcdeck.png) -> dist/PC Control Deck.app (LSUIElement)
 #   Linux:   scripts/build-agent.sh -> dist/PCControlDeck/PCControlDeck (packed as .tar.gz)
+import os
 import re
 import sys
 from pathlib import Path
@@ -40,6 +41,18 @@ else:
                      "pcdeck_agent.gui.autostart_posix"]
     if not IS_MAC:
         hiddenimports += ["jeepney", "jeepney.io.blocking", "jeepney.bus_messages", "jeepney.wrappers", "pynvml"]
+
+# USB firmware updater: esptool loads its flasher stubs (JSON) from its package folder, and the
+# decks' latest firmware ships inside the app (tools/fetch_firmware.py -> build/firmware).
+datas += collect_data_files("esptool") + collect_data_files("esp_pylib")
+hiddenimports += ["serial.tools.list_ports"]
+FIRMWARE = AGENT / "build" / "firmware"
+if (FIRMWARE / "manifest.json").exists():
+    datas.append((str(FIRMWARE), "firmware"))
+elif os.environ.get("CI"):
+    raise SystemExit("build/firmware is missing: run tools/fetch_firmware.py before PyInstaller")
+else:
+    print("WARNING: no bundled deck firmware (run tools/fetch_firmware.py); the updater will use GitHub")
 
 a = Analysis(
     [str(AGENT / "packaging" / "launcher.py")],

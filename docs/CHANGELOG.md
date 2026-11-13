@@ -3,6 +3,26 @@
 Until 0.7.0 the app lived in the `agent/` folder of the JC3248W535 deck repository; this repository
 keeps that history. Deck firmware changes are listed in each deck repository.
 
+## 0.8.0 — Deck firmware over USB
+
+Install or update a deck's firmware from the app, on Windows, macOS and Linux
+([ADR 0006](adr/0006-usb-firmware-updates.md)).
+
+- **Paired devices › Update firmware over USB…** lists the decks plugged in over USB: model, port,
+  installed firmware and the latest one. **Update** keeps Wi-Fi, pairing and settings; **Clean
+  install** erases them. Boards without the deck firmware get a full install once you pick the
+  model.
+- **Automatic choice of image:** the deck names its model (`id` console command; firmware without
+  it is recognised from `status`). esptool checks the chip (ESP32-S3 / ESP32-P4), and on the
+  JC1060P470C the build for its P4 silicon revision (v1.x / v3.x) is picked.
+- **The latest firmware of every deck ships inside the app** (this release: JC1060P470C 0.12.4,
+  JC4827W543 0.12.2, JC3248W535 0.13.2), so updates work offline. When GitHub has a newer firmware
+  release, the app downloads and uses it.
+- **Checked twice:** at build time and before writing. Each image must match GitHub's SHA-256 and be
+  a sound ESP image for the deck's chip (partition table, bootloader and app headers, checksum,
+  hash). A bad or missing image stops the app build.
+- esptool 5.6.0 as a library (with pyserial). Linux: the user needs serial port access (`dialout`).
+
 ## 0.7.0 — Linux and macOS
 
 The app now runs on **Linux** and **macOS** as well as Windows (same tray app, same protocol, same

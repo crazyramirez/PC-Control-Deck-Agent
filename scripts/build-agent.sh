@@ -21,6 +21,7 @@ if [ "${SKIP_TESTS:-0}" != "1" ]; then
 fi
 
 mkdir -p build dist/release
+"$PY" tools/fetch_firmware.py  # the decks' latest firmware, bundled for the USB updater
 "$PY" packaging/make_icon.py build/pcdeck.png
 "$PY" -m PyInstaller --noconfirm --clean --distpath dist --workpath build/pyinstaller packaging/pcdeck.spec
 

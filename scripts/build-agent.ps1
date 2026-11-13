@@ -18,6 +18,8 @@ try {
 
     & $py tools\fetch_lhm.py
     if ($LASTEXITCODE -ne 0) { throw "LibreHardwareMonitor fetch failed" }
+    & $py tools\fetch_firmware.py  # the decks' latest firmware, bundled for the USB updater
+    if ($LASTEXITCODE -ne 0) { throw "deck firmware fetch failed" }
     if (-not $SkipTests) {
         & $py -m pytest -q
         if ($LASTEXITCODE -ne 0) { throw "tests failed" }

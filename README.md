@@ -8,14 +8,16 @@ One app serves every deck that speaks protocol v1:
 
 | Deck | Repository |
 |---|---|
+| Guition **JC1060P470C** — 7" 1024×600 landscape, ESP32-P4 + ESP32-C6 (navigation rail, Crypto tab, setup assistant) | [PC-Control-Deck-ESP32-JC1060P470C](https://github.com/crazyramirez/PC-Control-Deck-ESP32-JC1060P470C) |
 | Guition **JC4827W543** — 4.3" 480×272 landscape (navigation rail, Crypto tab, setup assistant) | [PC-Control-Deck-ESP32-JC4827W543](https://github.com/crazyramirez/PC-Control-Deck-ESP32-JC4827W543) |
 | Guition **JC3248W535** — 3.5" 320×480 portrait (bottom tabs, Crypto tab from firmware 0.9.0, setup wizard) | [PC-Control-Deck-ESP32-JC3248W535](https://github.com/crazyramirez/PC-Control-Deck-ESP32-JC3248W535) |
 
 The deck repositories hold only their firmware; **the app is developed and released here**, and
 the decks embed this repository's protocol fixtures in their firmware tests. Weather needs app 0.5
-or later, the Crypto tab 0.6 or later.
+or later, the Crypto tab 0.6 or later. From 0.8.0 the app also **installs and updates the decks'
+firmware over USB**, and carries the latest firmware of every deck inside it.
 
-Current version: **0.7.0** — see [CHANGELOG](docs/CHANGELOG.md).
+Current version: **0.8.0** — see [CHANGELOG](docs/CHANGELOG.md).
 
 ---
 
@@ -23,11 +25,12 @@ Current version: **0.7.0** — see [CHANGELOG](docs/CHANGELOG.md).
 
 1. [Install](#install)
 2. [Pair a deck](#pair-a-deck)
-3. [The app](#the-app)
-4. [What it measures and controls](#what-it-measures-and-controls)
-5. [Security and privacy](#security-and-privacy)
-6. [Building from source](#building-from-source)
-7. [Changing the protocol](#changing-the-protocol)
+3. [Update a deck's firmware over USB](#update-a-decks-firmware-over-usb)
+4. [The app](#the-app)
+5. [What it measures and controls](#what-it-measures-and-controls)
+6. [Security and privacy](#security-and-privacy)
+7. [Building from source](#building-from-source)
+8. [Changing the protocol](#changing-the-protocol)
 
 ---
 
@@ -49,6 +52,33 @@ Download the build for your system from the [Releases](https://github.com/crazyr
    found automatically over mDNS, or type its IP — and enter the code.
 3. The deck reconnects by itself from then on, even if the PC's IP address changes.
 
+## Update a deck's firmware over USB
+
+1. Plug the deck into the computer with a USB **data** cable (some cables only charge).
+2. In the app, *Paired devices* › **Update firmware over USB…**. The deck shows up with its model,
+   port, installed firmware and the latest one, e.g. *Firmware 0.12.3 · latest 0.12.4*.
+3. Click **Update to …**. Wi-Fi, pairing and settings stay. Tick **Clean install** to erase them
+   too.
+
+How it works:
+
+- **The firmware is inside the app.** Every app release carries the latest released firmware of
+  every deck, so updating works offline. When GitHub has a newer firmware release than the one
+  bundled, the app downloads that one instead.
+- **Image checks.** Each image is checked against GitHub's SHA-256 digest and as an ESP image for
+  the deck's chip: bootloader and app headers, checksum and hash. This happens both when the app is
+  built (a bad image fails the build) and before anything is written.
+- **Recognising the deck.** The deck's USB console names the model (`id`, firmware 0.12.2 / 0.13.2 /
+  0.12.4 and later; older firmware from its `status`).
+- **Boards without the deck firmware.** If a board does not answer (new board, other firmware), pick
+  the model; the app checks the chip (ESP32-S3 / ESP32-P4) and does a clean install. On the
+  JC1060P470C it picks the build for the board's ESP32-P4 revision (v1.x or v3.x) by itself.
+- **Flashing.** Uses [esptool](https://github.com/espressif/esptool) (Espressif's flasher) as a
+  library. An update writes only the app part (from 0x10000), so the settings stored below it stay.
+  A clean install erases the flash and writes the whole image.
+- **Linux:** your user needs access to serial ports (`sudo usermod -aG dialout $USER`, then log in
+  again). Close any serial monitor that has the port open.
+
 ---
 
 ## The app
@@ -58,7 +88,7 @@ English, following the system language) has:
 
 - **Pair device** — the one-time 6-digit code with a countdown and how to enter it on the deck.
 - **Paired devices** — each deck with its firmware version and *Connected · IP* / *seen 5 min ago*,
-  plus **Unpair**.
+  plus **Unpair**, and **Update firmware over USB…** ([above](#update-a-decks-firmware-over-usb)).
 - **This PC** — address and port, Bonjour discovery, sensor provider, privileges (what needs
   administrator / root on this system).
 - **Allow shutting down and restarting the PC from the device** — off by default.
@@ -180,9 +210,18 @@ instance next to the installed one).
 | Paired-device store | DPAPI | 0600 file | 0600 file |
 | Package | PyInstaller + Inno Setup | PyInstaller → `.tar.gz` | PyInstaller → `.app` → `.zip` / `.dmg` |
 
-Common: websockets, zeroconf (mDNS), PySide6 (tray app), psutil, Pillow (album art).
+Common: websockets, zeroconf (mDNS), PySide6 (tray app), psutil, Pillow (album art), esptool +
+pyserial (deck firmware over USB).
 Details: [ADR 0002](docs/adr/0002-agent-stack.md), [ADR 0003](docs/adr/0003-pairing-tray-installer.md),
-[ADR 0005](docs/adr/0005-cross-platform-agent.md) (Linux and macOS).
+[ADR 0005](docs/adr/0005-cross-platform-agent.md) (Linux and macOS),
+[ADR 0006](docs/adr/0006-usb-firmware-updates.md) (deck firmware over USB).
+
+**Bundled deck firmware:** the build scripts run `tools/fetch_firmware.py` before PyInstaller. It
+puts the latest release of every deck in the catalog (`src/pcdeck_agent/flasher/boards.py`) into
+`build/firmware/` with a manifest: merged images of every variant, checked against GitHub's
+SHA-256 digests and as ESP images for each deck's chip. A missing deck or variant, or a bad image,
+stops the build. Release the decks' firmware first, then the app. To add a deck, see the
+docstring of `Board` in `boards.py`.
 
 **Continuous integration:** [`build.yml`](.github/workflows/build.yml) runs the tests and builds the
 app on Windows, macOS arm64 (`macos-latest`), macOS x86_64 (`macos-15-intel`) and Ubuntu 22.04 on
@@ -193,7 +232,8 @@ build twice).
 
 ```
 src/pcdeck_agent/   server, protocol, pairing/credentials, hardware providers (Windows, Linux, macOS),
-                    media/commands, weather, crypto, tray GUI
+                    media/commands, weather, crypto, tray GUI, flasher (deck firmware over USB)
+tools/              fetch_lhm.py (LibreHardwareMonitor), fetch_firmware.py (bundled deck firmware)
 tests/              pytest (runs on Windows, Linux and macOS)
 shared/             protocol fixtures, also embedded in the deck firmware tests
 packaging/          PyInstaller spec, Inno Setup script, icons, Linux .desktop + install.sh

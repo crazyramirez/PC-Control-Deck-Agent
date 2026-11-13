@@ -74,6 +74,7 @@ jobs:
         shell: pwsh
         env:
           QT_QPA_PLATFORM: offscreen  # icon rendering without a desktop session
+          GITHUB_TOKEN: ${{ github.token }}  # tools/fetch_firmware.py: release lookups (API limit)
         run: |
           if (-not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) {
             choco install innosetup --version=6.7.1 -y --no-progress
@@ -89,6 +90,7 @@ jobs:
         env:
           SKIP_TESTS: "1"
           PYTHON: ${{ env.PY }}
+          GITHUB_TOKEN: ${{ github.token }}  # tools/fetch_firmware.py: release lookups (API limit)
         run: bash scripts/build-agent.sh
 
       - uses: actions/upload-artifact@v7

@@ -222,7 +222,12 @@ class MainWindow(QWidget):
         self.devices_box = QVBoxLayout()
         self.devices_box.setSpacing(6)
         lay.addLayout(self.devices_box)
+        flash_btn = QPushButton(t("flash_button"))
+        flash_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        flash_btn.clicked.connect(self._open_flasher)
+        lay.addWidget(flash_btn)
         root.addWidget(card)
+        self._flasher = None
 
         # This PC card
         card, lay = _card(t("pc_title"))
@@ -398,6 +403,16 @@ class MainWindow(QWidget):
         if QMessageBox.question(self, t("app"), t("unpair_confirm", name=name)) == QMessageBox.StandardButton.Yes:
             self.rt.revoke(client_id)
             self._refresh_devices()
+
+    def _open_flasher(self) -> None:
+        from .flash_dialog import FlashDialog  # lazy: esptool / pyserial load only when used
+
+        if self._flasher is None or not self._flasher.isVisible():
+            self._flasher = FlashDialog(self)
+            self._flasher.finished.connect(lambda _r: setattr(self, "_flasher", None))
+        self._flasher.show()
+        self._flasher.raise_()
+        self._flasher.activateWindow()
 
     def _toggle_autostart(self, on: bool) -> None:
         ok, msg = autostart.set_enabled(on)

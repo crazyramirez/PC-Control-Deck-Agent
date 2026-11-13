@@ -157,14 +157,17 @@ def test_launch_command(monkeypatch):
 
 
 def test_linux_entries_renamed_after_self_update(tmp_path):
-    """0.10 renamed the app ("PC Control Deck" -> "Control Deck"): entries left by older installs follow."""
-    old = "[Desktop Entry]\nType=Application\nName=PC Control Deck\nComment=Hardware telemetry and media control for the PC Control Deck\nExec=x\n"
+    """The app was "PC Control Deck" before 0.10 and "Control Deck" until 1.0: entries left by older
+    installs become "DECKY Agent"."""
+    pc = "[Desktop Entry]\nType=Application\nName=PC Control Deck\nComment=Hardware telemetry and media control for the PC Control Deck\nExec=x\n"
+    cd = "[Desktop Entry]\nType=Application\nName=Control Deck\nComment=Hardware telemetry and media control for your PC Control Deck touch deck\nExec=x\n"
     menu = AP.menu_entry_path(tmp_path)
     auto = AP.linux_path(tmp_path)
-    for p in (menu, auto):
+    for p, text in ((menu, pc), (auto, cd)):
         p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(old, encoding="utf-8")
+        p.write_text(text, encoding="utf-8")
     assert AP.migrate_names(tmp_path) == [menu, auto]
-    assert "Name=Control Deck\n" in menu.read_text(encoding="utf-8")
-    assert "PC Control Deck touch deck" in auto.read_text(encoding="utf-8")
+    for p in (menu, auto):
+        text = p.read_text(encoding="utf-8")
+        assert "Name=DECKY Agent\n" in text and "for your DECKY touch deck\n" in text and "Control Deck" not in text
     assert AP.migrate_names(tmp_path) == []  # nothing left to change

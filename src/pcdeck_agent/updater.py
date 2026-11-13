@@ -39,7 +39,7 @@ from .flasher.boards import OWNER, is_newer
 from .flasher.releases import Asset, Release, latest_of
 from .flasher.releases import download as download_asset
 
-REPO = "PC-Control-Deck-Agent"
+REPO = "DECKY-Agent"  # renamed from PC-Control-Deck-Agent (GitHub redirects the old name)
 RELEASES_URL = f"https://github.com/{OWNER}/{REPO}/releases/latest"
 RETRY_FAILED_AFTER_S = 24 * 3600
 
@@ -148,7 +148,7 @@ def swap_script(old: PurePath, new: PurePath, workdir: PurePath, relaunch: list[
     q = shlex.quote
     bak = q(str(old) + ".old-update")
     return f"""#!/bin/sh
-# Control Deck self-update: replace the app once it has quit, then start the new one.
+# DECKY Agent self-update: replace the app once it has quit, then start the new one.
 i=0
 while kill -0 {pid} 2>/dev/null && [ $i -lt 120 ]; do sleep 0.5; i=$((i+1)); done
 rm -rf {bak}

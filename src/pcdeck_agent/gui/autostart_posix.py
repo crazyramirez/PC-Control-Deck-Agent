@@ -43,17 +43,24 @@ def menu_entry_path(home: Path | None = None) -> Path:
     return Path(data or _home(home) / ".local" / "share") / "applications" / DESKTOP_NAME
 
 
+COMMENT = "media control for your DECKY touch deck"  # tail of the Comment= line
+
+
 def migrate_names(home: Path | None = None) -> list[Path]:
-    """Linux: the app was "PC Control Deck" before 0.10. A self-update replaces the app folder only,
-    so rename it in the menu and autostart entries it left behind. Returns the files changed."""
+    """Linux: the app was "PC Control Deck" before 0.10 and "Control Deck" until 1.0. A self-update
+    replaces the app folder only, so rename it in the menu and autostart entries it left behind.
+    Returns the files changed."""
     changed = []
     for p in (menu_entry_path(home), linux_path(home)):
         try:
             text = p.read_text(encoding="utf-8")
         except OSError:
             continue
-        new = text.replace("Name=PC Control Deck\n", "Name=Control Deck\n").replace(
-            "media control for the PC Control Deck\n", "media control for your PC Control Deck touch deck\n"
+        new = (
+            text.replace("Name=PC Control Deck\n", "Name=DECKY Agent\n")
+            .replace("Name=Control Deck\n", "Name=DECKY Agent\n")
+            .replace("media control for the PC Control Deck\n", COMMENT + "\n")
+            .replace("media control for your PC Control Deck touch deck\n", COMMENT + "\n")
         )
         if new != text:
             p.write_text(new, encoding="utf-8")
@@ -72,8 +79,8 @@ def desktop_entry(cmd: list[str]) -> str:
     return "\n".join([
         "[Desktop Entry]",
         "Type=Application",
-        "Name=Control Deck",
-        "Comment=Hardware telemetry and media control for your PC Control Deck touch deck",
+        "Name=DECKY Agent",
+        "Comment=Hardware telemetry and media control for your DECKY touch deck",
         "Exec=" + " ".join(_exec_quote(a).replace("%", "%%") for a in cmd),
         "Icon=pcdeck",
         "Terminal=false",

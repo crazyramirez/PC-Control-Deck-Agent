@@ -12,7 +12,7 @@ import sys
 from PySide6.QtCore import QLocale
 
 _ES = {
-    "app": "Control Deck",
+    "app": "DECKY Agent",
     "running": "Activo",
     "starting": "Iniciando…",
     "error": "Error",
@@ -48,7 +48,7 @@ _ES = {
     "logs": "Registros",
     "quit": "Salir",
     "open": "Abrir",
-    "tray_hidden": "Control Deck sigue funcionando en la bandeja.",
+    "tray_hidden": "DECKY Agent sigue funcionando en la bandeja.",
     "autostart_fail": "No se pudo cambiar el inicio automático: {msg}",
     "just_now": "hace un momento",
     "minutes_ago": "hace {n} min",
@@ -104,7 +104,7 @@ _ES = {
     "update_now": "Actualizar a {v}",
     "update_downloading": "Descargando la versión {v}… {pct} %",
     "update_installing": "Instalando la versión {v}: la app se reiniciará en unos segundos.",
-    "update_installed": "Control Deck se ha actualizado a la versión {v}.",
+    "update_installed": "DECKY Agent se ha actualizado a la versión {v}.",
     "update_waiting": "Versión {v} lista: se instalará al terminar la actualización del deck.",
     "update_retry": "La actualización a {v} no se completó. Reinténtalo cuando quieras.",
     "update_manual": "Versión {v} disponible: esta copia no se actualiza sola, descárgala de GitHub.",
@@ -116,7 +116,7 @@ _ES = {
 }
 
 _EN = {
-    "app": "Control Deck",
+    "app": "DECKY Agent",
     "running": "Running",
     "starting": "Starting…",
     "error": "Error",
@@ -152,7 +152,7 @@ _EN = {
     "logs": "Logs",
     "quit": "Quit",
     "open": "Open",
-    "tray_hidden": "Control Deck keeps running in the tray.",
+    "tray_hidden": "DECKY Agent keeps running in the tray.",
     "autostart_fail": "Could not change auto start: {msg}",
     "just_now": "just now",
     "minutes_ago": "{n} min ago",
@@ -208,7 +208,7 @@ _EN = {
     "update_now": "Update to {v}",
     "update_downloading": "Downloading version {v}… {pct} %",
     "update_installing": "Installing version {v}: the app restarts in a few seconds.",
-    "update_installed": "Control Deck was updated to version {v}.",
+    "update_installed": "DECKY Agent was updated to version {v}.",
     "update_waiting": "Version {v} ready: it installs once the deck update finishes.",
     "update_retry": "The update to {v} did not finish. Try again whenever you like.",
     "update_manual": "Version {v} available: this copy does not update itself, download it from GitHub.",
@@ -232,7 +232,7 @@ _OS_ES = {
         "admin_hint": "La potencia de CPU/GPU y la frecuencia de CPU requieren powermetrics (root). Para controlar Música o Spotify, macOS pide permiso de Automatización la primera vez.",
         "admin_yes": "Root · potencia y frecuencia disponibles",
         "admin_no": "Usuario estándar · sin potencia ni frecuencia de CPU",
-        "tray_hidden": "Control Deck sigue funcionando en la barra de menús.",
+        "tray_hidden": "DECKY Agent sigue funcionando en la barra de menús.",
         "allow_power": "Permitir apagar y reiniciar desde el dispositivo",
     },
 }
@@ -250,7 +250,7 @@ _OS_EN = {
         "admin_hint": "CPU/GPU power and CPU clock need powermetrics (root). To control Music or Spotify, macOS asks for the Automation permission the first time.",
         "admin_yes": "Root · power and clock available",
         "admin_no": "Standard user · no CPU power or clock",
-        "tray_hidden": "Control Deck keeps running in the menu bar.",
+        "tray_hidden": "DECKY Agent keeps running in the menu bar.",
         "allow_power": "Allow shutdown and restart from the device",
     },
 }

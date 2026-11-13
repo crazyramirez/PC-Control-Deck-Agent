@@ -21,7 +21,7 @@ sys.path.insert(0, str(AGENT / "src"))
 
 from pcdeck_agent.flasher import releases  # noqa: E402
 
-REPO = "PC-Control-Deck-Agent"
+REPO = "DECKY-Agent"
 SYSTEMS = ("windows-x64", "linux-x86_64", "macos-arm64", "macos-x86_64")
 
 

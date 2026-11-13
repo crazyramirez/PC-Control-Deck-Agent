@@ -14,7 +14,7 @@ try {
     if (-not (Test-Path $py)) { throw "run scripts/setup-agent.ps1 first" }
     $env:PYTHONPATH = "src"
     $version = & $py -c "import pcdeck_agent; print(pcdeck_agent.__version__)"
-    Write-Host "== Control Deck $version"
+    Write-Host "== DECKY Agent $version"
 
     & $py tools\fetch_lhm.py
     if ($LASTEXITCODE -ne 0) { throw "LibreHardwareMonitor fetch failed" }

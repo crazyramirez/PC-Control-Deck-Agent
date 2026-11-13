@@ -1,4 +1,4 @@
-# Control Deck desktop app: tests + PyInstaller builds for Windows, macOS (arm64 + x86_64) and Linux.
+# DECKY Agent desktop app: tests + PyInstaller builds for Windows, macOS (arm64 + x86_64) and Linux.
 # Releases: a push to main whose version (pcdeck_agent.__version__) has no GitHub Release yet publishes
 # one from the same run, creating the tag vX.Y.Z (GITHUB_TOKEN: no second run). Bump the version, add
 # its "## X.Y.Z" CHANGELOG section, push. Don't push tags by hand: that would build the commit twice.
@@ -157,7 +157,7 @@ jobs:
         with:
           tag_name: ${{ steps.ver.outputs.tag }}
           target_commitish: ${{ github.sha }}
-          name: Control Deck ${{ steps.ver.outputs.tag }}
+          name: DECKY Agent ${{ steps.ver.outputs.tag }}
           body_path: notes.md
           files: assets/*
           generate_release_notes: true

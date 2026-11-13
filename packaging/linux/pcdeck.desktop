@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-Name=Control Deck
-Comment=Hardware telemetry and media control for your PC Control Deck touch deck
+Name=DECKY Agent
+Comment=Hardware telemetry and media control for your DECKY touch deck
 Exec=@EXEC@
 Icon=pcdeck
 Terminal=false

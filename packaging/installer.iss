@@ -1,11 +1,13 @@
-; Inno Setup 6 script for Control Deck (Windows agent + tray app; "PC Control Deck" before 0.10).
+; Inno Setup 6 script for DECKY Agent (Windows agent + tray app; "PC Control Deck" before 0.10,
+; "Control Deck" until 1.0).
 ; Built by scripts/build-agent.ps1:  ISCC.exe /DAppVersion=x.y.z installer.iss
 
 #ifndef AppVersion
   #define AppVersion "0.0.0"
 #endif
-#define AppName "Control Deck"
+#define AppName "DECKY Agent"
 #define OldAppName "PC Control Deck"
+#define OldAppName2 "Control Deck"
 #define AppExe "PCControlDeck.exe"
 
 [Setup]
@@ -39,8 +41,8 @@ es.TaskAutostart=Iniciar con Windows (recomendado)
 en.TaskAutostart=Start with Windows (recommended)
 es.TaskFirewall=Permitir que los dispositivos se conecten en redes privadas (recomendado)
 en.TaskFirewall=Allow devices to connect on private networks (recommended)
-es.Launch=Abrir Control Deck
-en.Launch=Open Control Deck
+es.Launch=Abrir DECKY Agent
+en.Launch=Open DECKY Agent
 es.GroupOptions=Opciones:
 en.GroupOptions=Options:
 
@@ -54,9 +56,12 @@ Source: "..\dist\PCControlDeck\*"; DestDir: "{app}"; Flags: ignoreversion recurs
 Source: "setup-tasks.ps1"; DestDir: "{app}"; Flags: ignoreversion
 
 [InstallDelete]
-; Upgrade from "PC Control Deck" (before 0.10): its shortcuts go (the folder stays, see AppId).
+; Upgrade from "PC Control Deck" (before 0.10) or "Control Deck" (until 1.0): their shortcuts go
+; (the folder stays, see AppId).
 Type: files; Name: "{autoprograms}\{#OldAppName}.lnk"
 Type: files; Name: "{autodesktop}\{#OldAppName}.lnk"
+Type: files; Name: "{autoprograms}\{#OldAppName2}.lnk"
+Type: files; Name: "{autodesktop}\{#OldAppName2}.lnk"
 
 [Icons]
 Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExe}"
@@ -69,6 +74,7 @@ Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -Fil
 ; Firewall: inbound only for this program, private profile only (agent WebSocket + mDNS replies)
 Filename: "netsh.exe"; Parameters: "advfirewall firewall delete rule name=""{#AppName}"""; Flags: runhidden waituntilterminated; Tasks: firewall
 Filename: "netsh.exe"; Parameters: "advfirewall firewall delete rule name=""{#OldAppName}"""; Flags: runhidden waituntilterminated
+Filename: "netsh.exe"; Parameters: "advfirewall firewall delete rule name=""{#OldAppName2}"""; Flags: runhidden waituntilterminated
 Filename: "netsh.exe"; Parameters: "advfirewall firewall add rule name=""{#AppName}"" dir=in action=allow program=""{app}\{#AppExe}"" protocol=TCP localport=8765 profile=private enable=yes"; Flags: runhidden waituntilterminated; Tasks: firewall
 Filename: "netsh.exe"; Parameters: "advfirewall firewall add rule name=""{#AppName}"" dir=in action=allow program=""{app}\{#AppExe}"" protocol=UDP localport=5353 profile=private enable=yes"; Flags: runhidden waituntilterminated; Tasks: firewall
 Filename: "{app}\{#AppExe}"; Description: "{cm:Launch}"; Flags: nowait postinstall skipifsilent

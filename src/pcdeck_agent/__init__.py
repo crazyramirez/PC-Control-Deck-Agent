@@ -1,3 +1,3 @@
-"""Control Deck (the PC Control Deck desktop app): hardware telemetry + allow-listed commands over the LAN."""
+"""DECKY Agent (the desktop app of the DECKY touch decks): hardware telemetry + allow-listed commands over the LAN."""
 
-__version__ = "0.11.0"
+__version__ = "1.0.0"

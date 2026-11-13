@@ -1,7 +1,7 @@
 [project]
 name = "pcdeck-agent"
-version = "0.11.0"
-description = "PC Control Deck agent: hardware telemetry and allow-listed commands over the LAN"
+version = "1.0.0"
+description = "DECKY Agent: hardware telemetry and allow-listed commands over the LAN for the DECKY touch decks"
 requires-python = ">=3.13,<3.14"
 # Exact pins: reproducible builds (see docs/adr/0002-agent-stack.md).
 dependencies = [

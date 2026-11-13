@@ -38,10 +38,10 @@ def test_catalog():
 
 def test_variant_and_image_names():
     p4, s3 = by_key("JC1060P470C"), by_key("JC4827W543")
-    assert p4.env(1) == "deck" and p4.env(3) == "deck_r3" and p4.env(None) == "deck"
-    assert s3.env(0) == "deck"
-    assert p4.image("0.12.3", "deck_r3") == "pcdeck-deck_r3-0.12.3-merged.bin"
-    assert s3.image("0.12.1", "deck") == "pcdeck-deck-0.12.1-merged.bin"
+    assert p4.env(1) == "JC1060P470C" and p4.env(3) == "JC1060P470C_r3" and p4.env(None) == "JC1060P470C"
+    assert s3.env(0) == s3.key
+    assert p4.image("1.0.0", "JC1060P470C_r3") == "pcdeck-JC1060P470C_r3-1.0.0-merged.bin"
+    assert s3.image("1.0.1", s3.key) == f"pcdeck-{s3.key}-1.0.1-merged.bin"
 
 
 def test_writes_from_a_merged_image():
@@ -63,10 +63,10 @@ def test_pick_prefers_bundled_unless_github_is_newer():
 def test_bundled_manifest(tmp_path):
     data = b"merged image"
     (tmp_path / "JC3248W535").mkdir()
-    (tmp_path / "JC3248W535" / "pcdeck-deck-0.13.1-merged.bin").write_bytes(data)
+    (tmp_path / "JC3248W535" / "pcdeck-JC3248W535-1.0.0-merged.bin").write_bytes(data)
     manifest = {"boards": {
-        "JC3248W535": {"tag": "v0.13.1", "assets": [
-            {"name": "pcdeck-deck-0.13.1-merged.bin", "size": len(data), "sha256": hashlib.sha256(data).hexdigest()},
+        "JC3248W535": {"tag": "v1.0.0", "assets": [
+            {"name": "pcdeck-JC3248W535-1.0.0-merged.bin", "size": len(data), "sha256": hashlib.sha256(data).hexdigest()},
             {"name": "../escape.bin", "size": 1, "sha256": None},
         ]},
         "JC4827W543": {"tag": "latest", "assets": []},
@@ -75,8 +75,8 @@ def test_bundled_manifest(tmp_path):
     rel = bundled.load(tmp_path)
     assert list(rel) == ["JC3248W535"]  # a bad tag is skipped
     r = rel["JC3248W535"]
-    assert r.source == "bundled" and r.version == "0.13.1" and list(r.assets) == ["pcdeck-deck-0.13.1-merged.bin"]
-    asset = r.assets["pcdeck-deck-0.13.1-merged.bin"]
+    assert r.source == "bundled" and r.version == "1.0.0" and list(r.assets) == ["pcdeck-JC3248W535-1.0.0-merged.bin"]
+    asset = r.assets["pcdeck-JC3248W535-1.0.0-merged.bin"]
     assert image_path(asset, tmp_path / "cache") == asset.path  # bundled: no download, verified in place
     asset.path.write_bytes(b"tampered!!!!")
     with pytest.raises(ReleaseError):
@@ -168,7 +168,7 @@ def release_json(**asset_extra):
     return {
         "tag_name": "v0.12.3",
         "assets": [
-            {"name": "pcdeck-deck-0.12.3.bin", "size": 11, "browser_download_url": "https://example.invalid/a.bin", **asset_extra},
+            {"name": "pcdeck-JC3248W535-1.0.0.bin", "size": 11, "browser_download_url": "https://example.invalid/a.bin", **asset_extra},
             {"name": "evil.bin", "size": 1, "browser_download_url": "http://example.invalid/b.bin"},  # not https: ignored
         ],
     }
@@ -177,16 +177,16 @@ def release_json(**asset_extra):
 def test_parse_release():
     rel = parse_release(release_json(digest="sha256:" + "AB" * 32))
     assert rel.tag == "v0.12.3" and rel.version == "0.12.3"
-    assert list(rel.assets) == ["pcdeck-deck-0.12.3.bin"]
-    assert rel.assets["pcdeck-deck-0.12.3.bin"].sha256 == "ab" * 32
-    assert parse_release(release_json()).assets["pcdeck-deck-0.12.3.bin"].sha256 is None
+    assert list(rel.assets) == ["pcdeck-JC3248W535-1.0.0.bin"]
+    assert rel.assets["pcdeck-JC3248W535-1.0.0.bin"].sha256 == "ab" * 32
+    assert parse_release(release_json()).assets["pcdeck-JC3248W535-1.0.0.bin"].sha256 is None
     with pytest.raises(ReleaseError):
         parse_release({"tag_name": "nightly"})
 
 
 def test_download_verifies_and_caches(tmp_path):
     data = b"firmware!!!"
-    asset = Asset("pcdeck-deck-0.12.3.bin", "https://example.invalid/a.bin", len(data), hashlib.sha256(data).hexdigest())
+    asset = Asset("pcdeck-JC3248W535-1.0.0.bin", "https://example.invalid/a.bin", len(data), hashlib.sha256(data).hexdigest())
     calls = []
 
     def opener(url):
@@ -202,23 +202,24 @@ def test_download_verifies_and_caches(tmp_path):
 
 def test_download_rejects_bad_digest_and_size(tmp_path):
     data = b"firmware!!!"
-    bad_sha = Asset("pcdeck-deck-0.12.3.bin", "https://example.invalid/a.bin", len(data), "00" * 32)
+    bad_sha = Asset("pcdeck-JC3248W535-1.0.0.bin", "https://example.invalid/a.bin", len(data), "00" * 32)
     with pytest.raises(ReleaseError):
         download(bad_sha, tmp_path, opener=lambda _u: io.BytesIO(data))
-    short = Asset("pcdeck-deck-0.12.3.bin", "https://example.invalid/a.bin", len(data) + 5)
+    short = Asset("pcdeck-JC3248W535-1.0.0.bin", "https://example.invalid/a.bin", len(data) + 5)
     with pytest.raises(ReleaseError):
         download(short, tmp_path, opener=lambda _u: io.BytesIO(data))
     assert not list(tmp_path.iterdir())  # nothing half-written left behind
 
 
 def test_download_prunes_older_images_of_the_same_variant(tmp_path):
-    (tmp_path / "pcdeck-deck-0.12.2.bin").write_bytes(b"old")
-    (tmp_path / "pcdeck-deck-0.12.2-merged.bin").write_bytes(b"old merged")
-    (tmp_path / "pcdeck-deck_r3-0.12.2.bin").write_bytes(b"other variant")
+    (tmp_path / "pcdeck-JC4827W543-0.12.2.bin").write_bytes(b"old")
+    (tmp_path / "pcdeck-JC4827W543-0.12.2-merged.bin").write_bytes(b"old merged")
+    (tmp_path / "pcdeck-JC4827W543_x-0.12.2.bin").write_bytes(b"other variant")
+    (tmp_path / "pcdeck-deck-0.12.1-merged.bin").write_bytes(b"named by the old repositories")
     data = b"new"
-    download(Asset("pcdeck-deck-0.12.3.bin", "https://example.invalid/a.bin", len(data)), tmp_path, opener=lambda _u: io.BytesIO(data))
+    download(Asset("pcdeck-JC4827W543-0.12.3.bin", "https://example.invalid/a.bin", len(data)), tmp_path, opener=lambda _u: io.BytesIO(data))
     names = sorted(p.name for p in tmp_path.iterdir())
-    assert names == ["pcdeck-deck-0.12.2-merged.bin", "pcdeck-deck-0.12.3.bin", "pcdeck-deck_r3-0.12.2.bin"]
+    assert names == ["pcdeck-JC4827W543-0.12.2-merged.bin", "pcdeck-JC4827W543-0.12.3.bin", "pcdeck-JC4827W543_x-0.12.2.bin"]
 
 
 def esp_image(cls_name: str) -> bytes:
@@ -274,5 +275,5 @@ def test_variants_cover_every_board():
 
 
 def test_releases_module_only_queries_known_repositories():
-    assert all(b.repo.startswith("PC-Control-Deck-ESP32-") for b in BOARDS)
+    assert all(b.repo == "DECKY-Firmware" for b in BOARDS)
     assert releases.API.startswith("https://api.github.com/repos/")

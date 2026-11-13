@@ -74,14 +74,15 @@ the current clock would be a fake value. ² RAPL is root-only since Linux 5.10 (
 - Minimum systems follow the Qt 6.12 wheels: **macOS 14** (`macosx_14_0` universal2) and
   **glibc 2.34** on Linux (the CI build on Ubuntu 22.04 needs glibc ≥ 2.35).
 - PyInstaller one-folder build everywhere (one spec): Windows `.exe` + Inno Setup (unchanged);
-  macOS `PC Control Deck.app` (`LSUIElement`: menu bar only, `NSAppleEventsUsageDescription`)
+  macOS `PC Control Deck.app` (`DECKY Agent.app` since 1.0; `LSUIElement`: menu bar only, `NSAppleEventsUsageDescription`)
   zipped and as `.dmg`, **unsigned**; Linux `.tar.gz` with the app folder, a `.desktop` file, the icon
   and a per-user `install.sh`. No AppImage yet.
 - `.github/workflows/build.yml` (this repository; `agent.yml` while the app lived in the deck
   repository): tests + builds on Windows, macOS arm64 (`macos-latest`), macOS x86_64
   (`macos-15-intel`: GitHub retired `macos-13`) and Ubuntu 22.04; releases on `v*` tags.
   The deck repositories keep `.github/workflows/firmware.yml`: PlatformIO builds, on-target tests
-  compiled, merged images.
+  compiled, merged images (since 1.0 one repository for every deck,
+  [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware)).
 
 ## Consequences
 

@@ -31,7 +31,7 @@
 - `tests/test_server.py`: no hello → close; wrong first message; unsupported version; command → unauthorized NACK with
   correlation; malformed frame; oversized frame; rate limit; max clients; private-peer filter.
 - `tests/test_protocol.py`: malformed / unknown type / version / size limits.
-- Deck repositories, `firmware/test/test_protocol`: same rejections on the deck parser; null → NaN (never 0).
+- [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware), `firmware/test/test_protocol`: same rejections on the deck parser; null → NaN (never 0).
 
 ## Internet access (weather, crypto)
 

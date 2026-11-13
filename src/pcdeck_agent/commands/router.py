@@ -69,7 +69,7 @@ class WindowsBackend:
         import subprocess
 
         flag = {"shutdown": "/s", "restart": "/r"}[op]
-        msg = "Control Deck: " + ("apagado solicitado desde el dispositivo" if op == "shutdown" else "reinicio solicitado desde el dispositivo")
+        msg = "DECKY Agent: " + ("apagado solicitado desde el dispositivo" if op == "shutdown" else "reinicio solicitado desde el dispositivo")
         r = subprocess.run(["shutdown", flag, "/t", str(POWER_DELAY_S), "/c", msg], capture_output=True, creationflags=0x08000000, timeout=10)
         return r.returncode == 0
 

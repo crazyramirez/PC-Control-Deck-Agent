@@ -1,4 +1,4 @@
-"""Control Deck agent CLI (Windows, Linux, macOS).
+"""DECKY Agent CLI (Windows, Linux, macOS).
 
   python -m pcdeck_agent sample [--count 5] [--interval 1.0] [--fake]
   python -m pcdeck_agent diag   [--out diag.json] [--fake]

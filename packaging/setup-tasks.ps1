@@ -1,10 +1,10 @@
-# Registers / removes the scheduled tasks used by Control Deck. Run elevated (by the installer).
-#   setup-tasks.ps1 -Exe "C:\Program Files\Control Deck\PCControlDeck.exe" -Autostart 1
+# Registers / removes the scheduled tasks used by DECKY Agent. Run elevated (by the installer).
+#   setup-tasks.ps1 -Exe "C:\Program Files\DECKY Agent\PCControlDeck.exe" -Autostart 1
 #   setup-tasks.ps1 -Remove
 #
-# "Control Deck"          on demand, highest privileges: the exe relaunches itself through it, so the
+# "DECKY Agent"          on demand, highest privileges: the exe relaunches itself through it, so the
 #                            app runs elevated (CPU temperature sensors) without a UAC prompt.
-# "Control Deck (inicio)" at logon of this user, highest privileges, starts minimized in the tray;
+# "DECKY Agent (inicio)" at logon of this user, highest privileges, starts minimized in the tray;
 #                            enabled/disabled by the "Start with Windows" switch.
 param(
     [string]$Exe = "",
@@ -12,10 +12,10 @@ param(
     [switch]$Remove
 )
 $ErrorActionPreference = "Stop"
-$runName = "Control Deck"
-$logonName = "Control Deck (inicio)"
-# Before 0.10 the app was "PC Control Deck": its tasks go too.
-$legacy = @("PC Control Deck", "PC Control Deck (inicio)")
+$runName = "DECKY Agent"
+$logonName = "DECKY Agent (inicio)"
+# Earlier names ("PC Control Deck" before 0.10, "Control Deck" until 1.0): their tasks go too.
+$legacy = @("PC Control Deck", "PC Control Deck (inicio)", "Control Deck", "Control Deck (inicio)")
 
 foreach ($n in @($runName, $logonName) + $legacy) {
     if (Get-ScheduledTask -TaskName $n -ErrorAction SilentlyContinue) {
@@ -33,12 +33,12 @@ $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoi
 
 $runAction = New-ScheduledTaskAction -Execute $Exe -WorkingDirectory (Split-Path $Exe)
 Register-ScheduledTask -TaskName $runName -Action $runAction -Principal $principal -Settings $settings `
-    -Description "Control Deck (on demand, elevated for hardware sensors)" | Out-Null
+    -Description "DECKY Agent (on demand, elevated for hardware sensors)" | Out-Null
 
 $logonAction = New-ScheduledTaskAction -Execute $Exe -Argument "--minimized" -WorkingDirectory (Split-Path $Exe)
 $trigger = New-ScheduledTaskTrigger -AtLogOn -User $user
 $trigger.Delay = "PT15S"  # let the network come up
 $task = Register-ScheduledTask -TaskName $logonName -Action $logonAction -Trigger $trigger -Principal $principal `
-    -Settings $settings -Description "Start Control Deck with Windows (tray)"
+    -Settings $settings -Description "Start DECKY Agent with Windows (tray)"
 if ($Autostart -eq 0) { Disable-ScheduledTask -TaskName $logonName | Out-Null }
 Write-Output "tasks registered for $user (autostart=$Autostart)"

@@ -2,7 +2,7 @@
 
 The app ships each model's latest firmware at build time (``bundled.py``), so updates work offline.
 When GitHub has a newer release, it is used instead (downloaded into a per-model cache). Only the
-fixed repositories in ``boards.BOARDS`` are queried (GitHub REST API, no token: 60 requests per
+fixed repository in ``boards.FIRMWARE_REPO`` is queried (GitHub REST API, no token: 60 requests per
 hour). Every image is checked against its size and, when known, its SHA-256 before it is used.
 """
 
@@ -166,9 +166,13 @@ def download(
 
 
 def _prune(dest: Path, keep: Path) -> None:
-    """Keep the cache small: older images of the same variant go (``pcdeck-<env>-<ver>...``)."""
-    prefix = "-".join(keep.name.split("-")[:2]) + "-"  # "pcdeck-deck_r3-"
+    """Keep the cache small: older images of the same variant go (``pcdeck-<env>-<ver>...``), and
+    so do the images named by the firmware repositories before 1.0 (``pcdeck-deck-...``)."""
+    prefix = "-".join(keep.name.split("-")[:2]) + "-"  # "pcdeck-JC1060P470C_r3-"
     merged = keep.name.endswith("-merged.bin")
     for p in dest.glob(prefix + "*.bin"):
         if p != keep and p.name.endswith("-merged.bin") == merged:
+            p.unlink(missing_ok=True)
+    for p in [*dest.glob("pcdeck-deck-*.bin"), *dest.glob("pcdeck-deck_r3-*.bin")]:
+        if p != keep:
             p.unlink(missing_ok=True)

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Per-user install of the Control Deck Linux build (no root needed).
+# Per-user install of the DECKY Agent Linux build (no root needed).
 #   ./install.sh             copy to ~/.local/opt/pcdeck, add the menu entry and icon
 #   ./install.sh --uninstall remove them (the paired-device store in ~/.config/pcdeck is kept)
 set -eu
@@ -11,7 +11,7 @@ ICON="$DATA/icons/hicolor/256x256/apps/pcdeck.png"
 
 if [ "${1:-}" = "--uninstall" ]; then
     rm -rf "$DEST" "$DESKTOP" "$ICON" "${XDG_CONFIG_HOME:-$HOME/.config}/autostart/pcdeck.desktop"
-    echo "Control Deck removed."
+    echo "DECKY Agent removed."
     exit 0
 fi
 
@@ -21,4 +21,4 @@ cp -R "$HERE/PCControlDeck" "$DEST/"
 cp "$HERE/pcdeck.png" "$ICON"
 sed "s|@EXEC@|\"$DEST/PCControlDeck/PCControlDeck\"|" "$HERE/pcdeck.desktop" > "$DESKTOP"
 command -v update-desktop-database >/dev/null 2>&1 && update-desktop-database "$DATA/applications" || true
-echo "Installed to $DEST. Start \"Control Deck\" from the applications menu."
+echo "Installed to $DEST. Start \"DECKY Agent\" from the applications menu."

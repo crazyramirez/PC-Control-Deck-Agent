@@ -1,4 +1,8 @@
-# PC Control Deck protocol v1
+# DECKY protocol v1
+
+Between **DECKY Agent** (the desktop app, "the agent" below) and a DECKY deck. The message names
+are unchanged; the identifiers on the wire (the mDNS service `_pcdeck._tcp`, the `PCDA` art frames)
+keep the project's earlier name, PC Control Deck.
 
 WebSocket over TCP inside the LAN. The **agent listens** (default port **8765**), the **deck connects**.
 Text frames, UTF-8 JSON, one message per frame. Fixtures: [`shared/fixtures/`](../shared/fixtures/).

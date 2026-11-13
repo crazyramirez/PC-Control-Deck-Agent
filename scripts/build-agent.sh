@@ -2,7 +2,7 @@
 # Builds the PC app on Linux or macOS with PyInstaller (Windows: scripts/build-agent.ps1).
 #   bash scripts/build-agent.sh
 #     Linux -> dist/release/PCControlDeck-<ver>-linux-<arch>.tar.gz  (app + .desktop + icon + install.sh)
-#     macOS -> dist/release/PCControlDeck-<ver>-macos-<arch>.zip and .dmg  (unsigned "Control Deck.app")
+#     macOS -> dist/release/PCControlDeck-<ver>-macos-<arch>.zip and .dmg  (unsigned "DECKY Agent.app")
 # Environment: PYTHON (default .venv/bin/python), SKIP_TESTS=1 to skip pytest.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -14,7 +14,7 @@ fi
 export PYTHONPATH=src
 VERSION=$("$PY" -c "import pcdeck_agent; print(pcdeck_agent.__version__)")
 ARCH=$(uname -m)
-echo "== Control Deck $VERSION ($(uname -s) $ARCH)"
+echo "== DECKY Agent $VERSION ($(uname -s) $ARCH)"
 
 if [ "${SKIP_TESTS:-0}" != "1" ]; then
     QT_QPA_PLATFORM=offscreen "$PY" -m pytest -q
@@ -27,7 +27,7 @@ mkdir -p build dist/release
 
 case "$(uname -s)" in
 Darwin)
-    APP="dist/Control Deck.app"
+    APP="dist/DECKY Agent.app"
     OUT="dist/release/PCControlDeck-$VERSION-macos-$ARCH"
     rm -f "$OUT.zip" "$OUT.dmg"
     ditto -c -k --sequesterRsrc --keepParent "$APP" "$OUT.zip"
@@ -36,7 +36,7 @@ Darwin)
     ln -s /Applications "$STAGE/Applications"
     # hdiutil sometimes fails with "Resource busy" on CI runners: retry a few times.
     for i in 1 2 3 4 5; do
-        if hdiutil create -volname "Control Deck $VERSION" -srcfolder "$STAGE" -ov -format UDZO "$OUT.dmg"; then
+        if hdiutil create -volname "DECKY Agent $VERSION" -srcfolder "$STAGE" -ov -format UDZO "$OUT.dmg"; then
             break
         fi
         [ "$i" = 5 ] && exit 1

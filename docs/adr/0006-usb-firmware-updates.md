@@ -1,7 +1,7 @@
 # ADR 0006 — Deck firmware over USB from the desktop app
 
 - **Status:** accepted (owner request, 2026-11-13) · app 0.8.0, deck firmware JC4827W543 0.12.2,
-  JC3248W535 0.13.2, JC1060P470C 0.12.4 (`id` console command)
+  JC3248W535 0.13.2, JC1060P470C 0.12.4 (`id` console command) · [updated for 1.0](#update-10)
 - **Extends:** [ADR 0003](0003-pairing-tray-installer.md) (tray app), [ADR 0005](0005-cross-platform-agent.md) (three systems)
 
 ## Context
@@ -69,3 +69,14 @@ deck models will follow.
   downloads. It sends no identifiers, only a generic User-Agent.
 - Flashing the wrong S3 model, which only a board without the deck firmware allows, leaves a dark
   screen until the right one is installed. The dialog asks for confirmation first.
+
+## Update (1.0)
+
+The three deck firmware repositories were merged into one,
+[DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware): one version for every deck, one
+release with every deck's images. Every `Board` now reads that repository (`boards.FIRMWARE_REPO`),
+and the variants are named after the deck: `JC1060P470C` / `JC1060P470C_r3` (P4 v1.x / v3.x),
+`JC4827W543` and `JC3248W535`. The images are `pcdeck-<DECK>-<version>.bin` /
+`-merged.bin`, so the S3 decks no longer share image names (files are still kept per model); the
+run-time cache drops images with the old names (`pcdeck-deck-…`, `pcdeck-deck_r3-…`). The decisions
+above are otherwise unchanged.

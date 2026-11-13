@@ -1,8 +1,8 @@
 """Start-with-Windows switch (Linux / macOS: start at login, see autostart_posix.py).
 
 Installed build: the installer registers two scheduled tasks for the current user:
-  "Control Deck"          on demand, highest privileges (Start-menu shortcut runs it, no UAC prompt)
-  "Control Deck (inicio)" at logon, highest privileges  <- this is what the switch enables/disables
+  "DECKY Agent"          on demand, highest privileges (Start-menu shortcut runs it, no UAC prompt)
+  "DECKY Agent (inicio)" at logon, highest privileges  <- this is what the switch enables/disables
 Elevation lets the agent read CPU temperatures (Lenovo EC / LibreHardwareMonitor).
 
 Development run (tasks absent): falls back to the per-user Run key (not elevated).
@@ -17,10 +17,11 @@ from pathlib import Path
 
 log = logging.getLogger(__name__)
 
-TASK_RUN = "Control Deck"
-TASK_LOGON = "Control Deck (inicio)"
-# Names before 0.10 (the app was "PC Control Deck"): setup-tasks.ps1 removes them on upgrade.
-LEGACY_TASKS = ("PC Control Deck", "PC Control Deck (inicio)")
+TASK_RUN = "DECKY Agent"
+TASK_LOGON = "DECKY Agent (inicio)"
+# Earlier names (the app was "PC Control Deck" before 0.10, "Control Deck" until 1.0): setup-tasks.ps1
+# removes them on upgrade.
+LEGACY_TASKS = ("PC Control Deck", "PC Control Deck (inicio)", "Control Deck", "Control Deck (inicio)")
 RUN_KEY = r"Software\Microsoft\Windows\CurrentVersion\Run"
 RUN_VALUE = "PCControlDeck"
 _NO_WINDOW = 0x08000000  # CREATE_NO_WINDOW

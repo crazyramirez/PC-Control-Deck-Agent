@@ -1,7 +1,26 @@
-# Changelog — Control Deck (the PC Control Deck desktop app)
+# Changelog — DECKY Agent (the desktop app of DECKY)
 
-Until 0.7.0 the app lived in the `agent/` folder of the JC3248W535 deck repository; this repository
-keeps that history. Deck firmware changes are listed in each deck repository.
+The app was "PC Control Deck" until 0.10 and "Control Deck" until 1.0. Until 0.7.0 it lived in the
+`agent/` folder of the JC3248W535 deck repository; this repository keeps that history. Deck firmware
+changes are listed in [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware/blob/main/docs/CHANGELOG.md).
+
+## 1.0.0 — DECKY Agent; one firmware repository for every deck
+
+- **The app is now called DECKY Agent** (the project is **DECKY**). The new name shows in the
+  window, the tray, the notifications, the installer, the Start-menu and desktop shortcuts, the
+  scheduled tasks, the macOS app, the Linux menu entry and the power-action notices.
+- **Upgrading keeps everything**: paired decks and settings stay in the same data folders. The
+  setup removes the shortcuts, scheduled tasks and firewall rule of the old names ("PC Control
+  Deck", "Control Deck"); on Linux the menu and autostart entries are renamed at the first start;
+  on macOS an app updated by itself keeps its old file name until it is installed again from the
+  `.dmg`.
+- **USB firmware updates from one repository:** the decks' firmware now comes from
+  [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware) (one version, one release with
+  every deck's images); the updater picks the image named after the deck it recognises.
+- **Bundled deck firmware: 1.0.0** for the JC1060P470C (both ESP32-P4 revisions), the JC4827W543
+  and the JC3248W535: the decks say *DECKY*, and the pairing steps name DECKY Agent.
+- The app's repository is now **DECKY-Agent** (GitHub redirects the old address, so earlier
+  versions keep updating themselves).
 
 ## 0.11.0 — Latest deck firmware: Today follows the weather
 

@@ -4,7 +4,7 @@
   API for the system-wide "Now Playing" (MediaRemote is private and locked down since macOS 15.4), so
   browsers and other players are not shown. Scripts only talk to apps that are installed *and*
   running (``application "X" is running`` never launches them). The first call makes macOS ask for
-  the Automation permission ("Control Deck wants to control Music / Spotify").
+  the Automation permission ("DECKY Agent wants to control Music / Spotify").
 - One ``osascript`` per sample returns the output volume, mute and both players' state.
 - Artwork: Spotify's ``artwork url`` (downloaded like on Linux); Music's ``raw data`` of artwork 1,
   written to a private temp file on track changes.

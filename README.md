@@ -1,23 +1,27 @@
-# Control Deck — the PC Control Deck desktop app
+# DECKY Agent — the desktop app of DECKY
 
-**Control Deck** is the PC side of **PC Control Deck** (named "PC Control Deck" itself until 0.10): a small tray app for **Windows, Linux and macOS** that reads the
-computer's sensors, media session, weather and crypto prices, and serves them over a paired,
-**LAN-only** WebSocket to an ESP32 touch deck. No cloud, no account.
+**DECKY Agent** is the PC side of **DECKY** (*Control Deck*), a family of ESP32 touch decks: a small
+tray app for **Windows, Linux and macOS** that reads the computer's sensors, media session, weather
+and crypto prices, and serves them over a paired, **LAN-only** WebSocket to the deck. No cloud, no
+account. (The app was named "PC Control Deck" until 0.10 and "Control Deck" until 1.0.)
 
 One app serves every deck that speaks protocol v1:
 
-| Deck | Repository |
+| Deck | Page |
 |---|---|
-| Guition **JC1060P470C** — 7" 1024×600 landscape, ESP32-P4 + ESP32-C6 (navigation rail, Crypto tab, setup assistant) | [PC-Control-Deck-ESP32-JC1060P470C](https://github.com/crazyramirez/PC-Control-Deck-ESP32-JC1060P470C) |
-| Guition **JC4827W543** — 4.3" 480×272 landscape (navigation rail, Crypto tab, setup assistant) | [PC-Control-Deck-ESP32-JC4827W543](https://github.com/crazyramirez/PC-Control-Deck-ESP32-JC4827W543) |
-| Guition **JC3248W535** — 3.5" 320×480 portrait (bottom tabs, Crypto tab from firmware 0.9.0, setup wizard) | [PC-Control-Deck-ESP32-JC3248W535](https://github.com/crazyramirez/PC-Control-Deck-ESP32-JC3248W535) |
+| Guition **JC1060P470C** — 7" 1024×600 landscape, ESP32-P4 + ESP32-C6 (navigation rail, Crypto tab, setup assistant) | [JC1060P470C](https://github.com/crazyramirez/DECKY-Firmware/blob/main/docs/decks/JC1060P470C.md) |
+| Guition **JC4827W543** — 4.3" 480×272 landscape (navigation rail, Crypto tab, setup assistant) | [JC4827W543](https://github.com/crazyramirez/DECKY-Firmware/blob/main/docs/decks/JC4827W543.md) |
+| Guition **JC3248W535** — 3.5" 320×480 portrait (bottom tabs, Crypto tab, setup wizard) | [JC3248W535](https://github.com/crazyramirez/DECKY-Firmware/blob/main/docs/decks/JC3248W535.md) |
 
-The deck repositories hold only their firmware; **the app is developed and released here**, and
-the decks embed this repository's protocol fixtures in their firmware tests. Weather needs app 0.5
-or later, the Crypto tab 0.6 or later. From 0.8.0 the app also **installs and updates the decks'
-firmware over USB**, and carries the latest firmware of every deck inside it.
+All deck firmware comes from one repository, [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware):
+one version for every deck, one release with every deck's images.
 
-Current version: **0.11.0** — see [CHANGELOG](docs/CHANGELOG.md). From 0.9.0 the app **updates
+DECKY-Firmware holds only the decks' firmware; **the app is developed and released here**, and the
+firmware tests embed this repository's protocol fixtures. Weather needs app 0.5 or later, the Crypto
+tab 0.6 or later. From 0.8.0 the app also **installs and updates the decks' firmware over USB**, and
+carries the latest firmware of every deck inside it.
+
+Current version: **1.0.0** — see [CHANGELOG](docs/CHANGELOG.md). From 0.9.0 the app **updates
 itself** when a new release is published.
 
 ---
@@ -37,14 +41,23 @@ itself** when a new release is published.
 
 ## Install
 
-Download the build for your system from the [Releases](https://github.com/crazyramirez/PC-Control-Deck-Agent/releases)
-(or the artifacts of the latest [build run](https://github.com/crazyramirez/PC-Control-Deck-Agent/actions/workflows/build.yml)).
+Download the build for your system from the [Releases](https://github.com/crazyramirez/DECKY-Agent/releases)
+(or the artifacts of the latest [build run](https://github.com/crazyramirez/DECKY-Agent/actions/workflows/build.yml)).
 
 | | File | Install | Notes |
 |---|---|---|---|
 | **Windows 10/11** | `PCControlDeck-Setup-<ver>.exe` (or `…-windows-x64-portable.zip`) | Run the installer (admin): tray app, optional start with Windows (elevated), firewall rules for **private networks only** | — |
 | **Linux** (x86_64) | `PCControlDeck-<ver>-linux-x86_64.tar.gz` | `tar xzf PCControlDeck-*.tar.gz && cd PCControlDeck-*/ && ./install.sh` — per user, no root: app in `~/.local/opt/pcdeck`, menu entry and icon; `./install.sh --uninstall` removes them | Built on Ubuntu 22.04 (glibc ≥ 2.35). Qt needs `libxcb-cursor0` (`sudo apt install libxcb-cursor0`). The tray needs a StatusNotifier host (GNOME: the AppIndicator extension, preinstalled on Ubuntu). If a firewall is active, allow TCP 8765 and UDP 5353 from your LAN (e.g. `sudo ufw allow from 192.168.0.0/16 to any port 8765 proto tcp`). |
-| **macOS 14+** | `PCControlDeck-<ver>-macos-arm64.dmg` (Apple Silicon) or `…-macos-x86_64.dmg` (Intel); `.zip` alternatives | Open the `.dmg`, drag **Control Deck** to Applications | The app is **not signed**: the first launch is blocked by Gatekeeper. macOS 15+: try to open it once, then *System Settings › Privacy & Security › Open Anyway*; macOS 14: right-click the app › *Open*. (Or: `xattr -dr com.apple.quarantine "/Applications/Control Deck.app"`.) Allow incoming connections / local network access when asked, and *Automation* access to Music / Spotify / System Events the first time the deck controls them. |
+| **macOS 14+** | `PCControlDeck-<ver>-macos-arm64.dmg` (Apple Silicon) or `…-macos-x86_64.dmg` (Intel); `.zip` alternatives | Open the `.dmg`, drag **DECKY Agent** to Applications | The app is **not signed**: the first launch is blocked by Gatekeeper. macOS 15+: try to open it once, then *System Settings › Privacy & Security › Open Anyway*; macOS 14: right-click the app › *Open*. (Or: `xattr -dr com.apple.quarantine "/Applications/DECKY Agent.app"`.) Allow incoming connections / local network access when asked, and *Automation* access to Music / Spotify / System Events the first time the deck controls them. |
+
+Upgrading from "PC Control Deck" or "Control Deck" keeps the paired decks and settings. The Windows
+setup removes the old names' shortcuts, scheduled tasks and firewall rules; on Linux the menu and
+autostart entries are renamed at the first start; on macOS an app that updated itself keeps its old
+file name until it is installed again from the `.dmg`. Internal names keep the earlier project name
+on purpose, because installs and self-updates depend on them: `PCControlDeck.exe`, the release files
+(`PCControlDeck-…`), the data folders (`%LOCALAPPDATA%\PcControlDeck`,
+`~/Library/Application Support/PC Control Deck`, `~/.config/pcdeck`), the bundle id
+`com.pcdeck.agent`, the mDNS service `_pcdeck._tcp` and the Python package `pcdeck_agent`.
 
 ## Pair a deck
 
@@ -57,23 +70,31 @@ Download the build for your system from the [Releases](https://github.com/crazyr
 
 1. Plug the deck into the computer with a USB **data** cable (some cables only charge).
 2. In the app, *Paired devices* › **Update firmware over USB…**. The deck shows up with its model,
-   port, installed firmware and the latest one, e.g. *Firmware 0.12.3 · latest 0.12.4*.
+   port, installed firmware and the latest one, e.g. *Firmware 0.13.0 · latest 1.0.0*.
 3. Click **Update to …**. Wi-Fi, pairing and settings stay. Tick **Clean install** to erase them
    too.
 
 How it works:
 
-- **The firmware is inside the app.** Every app release carries the latest released firmware of
-  every deck, so updating works offline. When GitHub has a newer firmware release than the one
-  bundled, the app downloads that one instead.
+- **One firmware repository.** Every deck's firmware comes from
+  [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware/releases): one version for all
+  decks, one release with every deck's images, named after the deck —
+  `pcdeck-<DECK>-<ver>.bin` (the app part) and `pcdeck-<DECK>-<ver>-merged.bin` (the whole flash),
+  where `<DECK>` is `JC1060P470C`, `JC1060P470C_r3` (ESP32-P4 v3.x), `JC4827W543` or `JC3248W535`.
+  The app uses the merged images.
+- **The firmware is inside the app.** Every app release carries the latest DECKY-Firmware release,
+  so updating works offline. When DECKY-Firmware has a newer release than the one bundled, the app
+  downloads the deck's image from it instead.
 - **Image checks.** Each image is checked against GitHub's SHA-256 digest and as an ESP image for
   the deck's chip: bootloader and app headers, checksum and hash. This happens both when the app is
   built (a bad image fails the build) and before anything is written.
-- **Recognising the deck.** The deck's USB console names the model (`id`, firmware 0.12.2 / 0.13.2 /
-  0.12.4 and later; older firmware from its `status`).
+- **Recognising the deck.** The deck's USB console names the model (`id`: every 1.0 firmware, and
+  the earlier per-deck firmware from JC4827W543 0.12.2 / JC3248W535 0.13.2 / JC1060P470C 0.12.4;
+  older firmware from its `status`).
 - **Boards without the deck firmware.** If a board does not answer (new board, other firmware), pick
   the model; the app checks the chip (ESP32-S3 / ESP32-P4) and does a clean install. On the
-  JC1060P470C it picks the build for the board's ESP32-P4 revision (v1.x or v3.x) by itself.
+  JC1060P470C it picks the build for the board's ESP32-P4 revision by itself: `JC1060P470C` (v1.x)
+  or `JC1060P470C_r3` (v3.x).
 - **Flashing.** Uses [esptool](https://github.com/espressif/esptool) (Espressif's flasher) as a
   library. An update writes only the app part (from 0x10000), so the settings stored below it stay.
   A clean install erases the flash and writes the whole image.
@@ -99,9 +120,10 @@ English, following the system language) has:
   It never updates in the middle of a USB firmware update. Next to it, the status and **Check for
   updates** / **Update to X**. The Windows portable zip only reports new versions
   ([ADR 0007](docs/adr/0007-app-self-update.md)).
-- **Start with Windows** / **Start at login** — Windows: an elevated scheduled task (no UAC prompt at
-  logon) so CPU temperature and other privileged sensors are readable; Linux: an entry in
-  `~/.config/autostart`; macOS: a LaunchAgent (`~/Library/LaunchAgents/com.pcdeck.agent.plist`).
+- **Start with Windows** / **Start at login** — Windows: an elevated scheduled task, *DECKY Agent
+  (inicio)* (no UAC prompt at logon), so CPU temperature and other privileged sensors are readable;
+  Linux: an entry in `~/.config/autostart`; macOS: a LaunchAgent
+  (`~/Library/LaunchAgents/com.pcdeck.agent.plist`).
 - **Logs** and **Quit**. Closing the window keeps the app running in the tray / menu bar.
 
 ---
@@ -225,11 +247,11 @@ Details: [ADR 0002](docs/adr/0002-agent-stack.md), [ADR 0003](docs/adr/0003-pair
 [ADR 0007](docs/adr/0007-app-self-update.md) (the app updates itself).
 
 **Bundled deck firmware:** the build scripts run `tools/fetch_firmware.py` before PyInstaller. It
-puts the latest release of every deck in the catalog (`src/pcdeck_agent/flasher/boards.py`) into
-`build/firmware/` with a manifest: merged images of every variant, checked against GitHub's
-SHA-256 digests and as ESP images for each deck's chip. A missing deck or variant, or a bad image,
-stops the build. Release the decks' firmware first, then the app. To add a deck, see the
-docstring of `Board` in `boards.py`.
+puts the latest [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware) release into
+`build/firmware/` with a manifest: the merged image of every deck and variant in the catalog
+(`src/pcdeck_agent/flasher/boards.py`), checked against GitHub's SHA-256 digests and as ESP images
+for each deck's chip. A missing deck or variant, or a bad image, stops the build. Release the
+firmware first, then the app. To add a deck, see the docstring of `Board` in `boards.py`.
 
 **Continuous integration:** [`build.yml`](.github/workflows/build.yml) runs the tests and builds the
 app on Windows, macOS arm64 (`macos-latest`), macOS x86_64 (`macos-15-intel`) and Ubuntu 22.04 on
@@ -257,8 +279,8 @@ docs/               PROTOCOL, SECURITY, ADRs, CHANGELOG
 1. Update [PROTOCOL.md](docs/PROTOCOL.md) and the fixtures in [`shared/fixtures`](shared/fixtures)
    (the app's tests read them), and keep protocol v1 backwards compatible: decks ignore unknown
    fields and message types.
-2. In each deck repository (cloned next to this one, e.g. `D:\DEV\PC-Control-Deck-Agent` and
-   `D:\DEV\PC Control Deck - ESP32-JC4827W543`), run `python firmware/tools/gen_fixtures.py` to
-   re-embed the fixtures in the firmware tests (`--agent <dir>` if this repository is elsewhere) and
-   commit `fixtures.h`. The JC4827W543 CI checks it against this repository's `main`
+2. In [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware) (cloned next to this
+   repository), run `python firmware/tools/gen_fixtures.py` to re-embed the fixtures in the
+   firmware tests (`--agent <dir>` if this repository is elsewhere) and commit
+   `fixtures.h`. The firmware CI checks it against this repository's `main`
    (`gen_fixtures.py --check`).

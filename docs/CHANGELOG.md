@@ -4,6 +4,12 @@ The app was "PC Control Deck" until 0.10 and "Control Deck" until 1.0. Until 0.7
 `agent/` folder of the JC3248W535 deck repository; this repository keeps that history. Deck firmware
 changes are listed in [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware/blob/main/docs/CHANGELOG.md).
 
+## 1.0.1 — Latest deck firmware: screensaver on demand
+
+- **Bundled deck firmware: 1.1.0** for every deck. A double tap on the status corner at the top
+  right of the deck (its battery and the PC link LED) starts the screensaver at once, when it is
+  enabled in the deck's *Settings › Screensaver*.
+
 ## 1.0.0 — DECKY Agent; one firmware repository for every deck
 
 - **The app is now called DECKY Agent** (the project is **DECKY**). The new name shows in the

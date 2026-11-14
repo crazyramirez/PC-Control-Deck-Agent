@@ -4,6 +4,13 @@ The app was "PC Control Deck" until 0.10 and "Control Deck" until 1.0. Until 0.7
 `agent/` folder of the JC3248W535 deck repository; this repository keeps that history. Deck firmware
 changes are listed in [DECKY-Firmware](https://github.com/crazyramirez/DECKY-Firmware/blob/main/docs/CHANGELOG.md).
 
+## 1.1.3 — Latest deck firmware: more cities on Today
+
+- **Bundled deck firmware: 1.3.0** for every deck. Today holds up to 6 cities: swipe sideways for
+  the next one (its local time, weather and picture), or open the *Cities* sheet, a world clock
+  with every city's time and weather where you add, remove or pick the main one. The app serves
+  each city's forecast as it already did for the one place: nothing changes on the PC.
+
 ## 1.1.2 — Latest deck firmware: no random restarts after power-on
 
 - **Bundled deck firmware: 1.2.2** for every deck. A deck could restart by itself a few seconds
